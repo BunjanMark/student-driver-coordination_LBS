@@ -14,6 +14,8 @@ import Password from "../components/Forms/Password";
 import fetchServices from "../services/fetchServices";
 import { useState } from "react";
 
+import Toast from "react-native-root-toast";
+
 const LoginScreen = () => {
   const navigator = useNavigation();
 
@@ -29,7 +31,7 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const showToast = (message = "something went wrong") => {
-    ToastAndroid.show(message, 3000);
+    Toast.show(message, 3000);
   };
   const handleLogin = async () => {
     try {
@@ -40,7 +42,7 @@ const LoginScreen = () => {
       }
       // API
 
-      const url = "http://192.168.254.123:8000/api/login";
+      const url = "http://192.168.254.110:8000/api/login";
       const data = {
         email,
         password,

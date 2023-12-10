@@ -9,6 +9,7 @@ import { FormStyle } from "../Styles/FormStyle";
 import { KeyboardAvoidingView, ToastAndroid } from "react-native";
 import { useState } from "react";
 import fetchServices from "../services/fetchServices";
+import Toast from "react-native-root-toast";
 const RegisterScreen = () => {
   const navigator = useNavigation();
   const [name, setName] = useState("");
@@ -25,7 +26,7 @@ const RegisterScreen = () => {
   };
 
   const showToast = (message = "something went wrong") => {
-    ToastAndroid.show(message, 3000);
+    Toast.show(message, 3000);
   };
   const handleRegistration = async () => {
     try {
@@ -43,7 +44,7 @@ const RegisterScreen = () => {
         return false;
       }
 
-      const url = "http://192.168.254.123:8000/api/register";
+      const url = "http://192.168.254.110:8000/api/register";
       const data = {
         name,
         email,
