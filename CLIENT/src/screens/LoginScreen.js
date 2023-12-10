@@ -2,6 +2,7 @@ import React from "react";
 import {
   SafeAreaView,
   KeyboardAvoidingView,
+  ImageBackground,
   StyleSheet,
   ToastAndroid,
 } from "react-native";
@@ -20,7 +21,6 @@ const LoginScreen = () => {
   const navigator = useNavigation();
 
   const [HideEntry, setHideEntry] = useState(true);
-
   const [errors, setErrors] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -80,21 +80,25 @@ const LoginScreen = () => {
 
   return (
     <PaperProvider>
-      <SafeAreaView style={FormStyle.formContainer}>
-        <KeyboardAvoidingView
-          behavior="padding"
-          style={FormStyle.formContainer}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 10}
-        >
-          <Header />
-          <Text variant="headlineMedium" style={{ marginTop: 5 }}>
-            {" "}
-            Login
-          </Text>
-          <SafeAreaView style={{ gap: 7 }}>
-            {/* <UserName />
-            <Password /> */}
-            <TextInput
+      <ImageBackground
+        source={require("../images/login.png")}
+        style={styles.backgroundImage}
+      >
+        <SafeAreaView style={FormStyle.formContainer}>
+          <KeyboardAvoidingView
+            behavior="padding"
+            style={FormStyle.formContainer}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 10}
+          >
+            <Header />
+            <Text variant="headlineMedium" style={{ marginTop: 5 }}>
+              {" "}
+              Login
+            </Text>
+            <SafeAreaView style={{ gap: 7 }}>
+              {/* <UserName />
+              <Password /> */}
+              <TextInput
               style={FormStyle.input_style}
               mode="outlined"
               label="Email"
@@ -128,8 +132,8 @@ const LoginScreen = () => {
             >
               Forgot password?
             </Button>
-          </SafeAreaView>
-          <Button
+            </SafeAreaView>
+            <Button
             style={FormStyle.button_style}
             mode="contained-tonal"
             icon="login"
@@ -169,15 +173,18 @@ const LoginScreen = () => {
           >
             go back
           </Button>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </ImageBackground>
     </PaperProvider>
   );
 };
 
-export default LoginScreen;
-
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover", // or "stretch"
+  },
   container: {
     justifyContent: "center",
     paddingHorizontal: 16,
@@ -189,3 +196,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
+
+export default LoginScreen;
+
