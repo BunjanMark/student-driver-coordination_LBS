@@ -99,80 +99,83 @@ const LoginScreen = () => {
               {/* <UserName />
               <Password /> */}
               <TextInput
-              style={FormStyle.input_style}
-              mode="outlined"
-              label="Email"
-              placeholder="Enter your email"
-              inputMode="email"
-              value={email}
-              error={isError}
-              onChangeText={(text) => {
-                setEmail(text);
-              }}
-            />
-            <TextInput
-              mode="outlined"
-              style={FormStyle.input_style}
-              label="Password"
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={HideEntry}
-              right={
-                <TextInput.Icon
-                  onPress={toggleSecureEntry}
-                  icon={HideEntry ? "eye" : "eye-off"}
-                />
-              }
-            />
-            <Button
-              onPress={() => {
-                navigator.navigate("AccountRecoveryScreen");
-              }}
-            >
-              Forgot password?
-            </Button>
+                style={FormStyle.input_style}
+                mode="outlined"
+                label="Email"
+                placeholder="Enter your email"
+                inputMode="email"
+                value={email}
+                error={isError}
+                onChangeText={(text) => {
+                  setEmail(text);
+                }}
+              />
+              <TextInput
+                mode="outlined"
+                style={FormStyle.input_style}
+                label="Password"
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={HideEntry}
+                right={
+                  <TextInput.Icon
+                    onPress={toggleSecureEntry}
+                    icon={HideEntry ? "eye" : "eye-off"}
+                  />
+                }
+              />
+              <Button
+                onPress={() => {
+                  navigator.navigate("AccountRecoveryScreen");
+                }}
+              >
+                Forgot password?
+              </Button>
             </SafeAreaView>
             <Button
-            style={FormStyle.button_style}
-            mode="contained-tonal"
-            icon="login"
-            onPress={handleLogin}
-            loading={loading}
-            disabled={loading}
-          >
-            Log in
-          </Button>
-
-          <SafeAreaView
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text>Not a member?</Text>
-            <Button
-              mode="text"
+              style={FormStyle.button_style}
+              mode="contained-tonal"
+              icon="login"
+              // onPress={handleLogin}                                            FOR TESTING
               onPress={() => {
-                navigator.navigate("RegisterScreen");
+                navigator.navigate("HomeScreen");
               }}
               loading={loading}
               disabled={loading}
             >
-              Sign up now
+              Log in
             </Button>
-          </SafeAreaView>
-          <Button
-            mode="text"
-            onPress={() => {
-              navigator.navigate("LandingScreen");
-            }}
-            loading={loading}
-            disabled={loading}
-          >
-            go back
-          </Button>
+
+            <SafeAreaView
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text>Not a member?</Text>
+              <Button
+                mode="text"
+                onPress={() => {
+                  navigator.navigate("RegisterScreen");
+                }}
+                loading={loading}
+                disabled={loading}
+              >
+                Sign up now
+              </Button>
+            </SafeAreaView>
+            <Button
+              mode="text"
+              onPress={() => {
+                navigator.navigate("LandingScreen");
+              }}
+              loading={loading}
+              disabled={loading}
+            >
+              go back
+            </Button>
           </KeyboardAvoidingView>
         </SafeAreaView>
       </ImageBackground>
@@ -198,4 +201,3 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
-

@@ -124,7 +124,7 @@ const RegisterScreen = () => {
           <Header />
           <Text variant="headlineMedium" style={{ marginTop: 5 }}>
             {" "}
-            Register {name} | {email} | {password} | {repassword}
+            Register
           </Text>
           <TextInput
             style={FormStyle.input_style}
@@ -162,7 +162,7 @@ const RegisterScreen = () => {
             right={
               <TextInput.Icon
                 onPress={toggleSecureEntry}
-                icon={!HideEntry ? "eye" : "eye-off"}
+                icon={HideEntry ? "eye" : "eye-off"}
               />
             }
           />
@@ -179,7 +179,7 @@ const RegisterScreen = () => {
             right={
               <TextInput.Icon
                 onPress={toggleSecureEntry}
-                icon={!HideEntry ? "eye" : "eye-off"}
+                icon={HideEntry ? "eye" : "eye-off"}
               />
             }
           />
