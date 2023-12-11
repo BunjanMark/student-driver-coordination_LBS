@@ -52,7 +52,6 @@ const SidebarMenu = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -77,5 +76,4 @@ const styles = StyleSheet.create({
     paddingRight: 40,
   },
 });
-
 export default SidebarMenu;
