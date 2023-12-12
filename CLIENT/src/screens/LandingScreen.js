@@ -1,38 +1,57 @@
 import React from "react";
-import { SafeAreaView, ImageBackground, StyleSheet } from "react-native";
-import Header from "../components/Forms/Header";
+import { SafeAreaView, ImageBackground, StyleSheet, Image } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
 const LandingScreen = () => {
   const navigator = useNavigation();
-  
+
+  // Assuming your current logo dimensions are 50x50
+  const currentLogoWidth = 50;
+  const currentLogoHeight = 50;
+  const newSizeMultiplier = 2; // 10% bigger
+
+  const newLogoWidth = currentLogoWidth * newSizeMultiplier;
+  const newLogoHeight = currentLogoHeight * newSizeMultiplier;
+
   return (
     <ImageBackground
       source={require("../images/landing.png")}
       style={styles.backgroundImage}
     >
       <SafeAreaView style={styles.container}>
-        <Header />
-        <Text variant="headlineMedium" style={{ marginTop: 40, marginBottom: 20}}>
+        {/* Logo positioned at the top left corner */}
+        <Image
+          source={require("../images/logo.png")}
+          style={{
+            ...styles.logo,
+            width: newLogoWidth,
+            height: newLogoHeight,
+          }}
+          resizeMode="contain"
+        />
+
+        <Text
+          variant="headlineMedium"
+          style={{
+            fontSize: 35,
+            color: 'black',
+            marginBottom: 10,
+            fontWeight: 'bold',
+          }}
+        >
           HotSpot
         </Text>
-        <SafeAreaView style={{ flexDirection: "column", gap: 40 }}>
-          {/* <Button
-            mode="contained-tonal"
-            icon={"login"}
-            onPress={() => {
-              navigator.navigate("LoginScreen");
-            }}
-          >
-            Log in
-          </Button> */}
+        <SafeAreaView style={styles.buttonContainer}>
+          {/* Your other components */}
           <Button
-            icon={"account-plus"}
             mode="contained"
             onPress={() => {
               navigator.navigate("RegisterScreen");
             }}
+            style={{ backgroundColor: 'black', width: 300, height: 40 }}
+            contentStyle={{ flexDirection: 'row-reverse', justifyContent: 'center', alignItems: 'center' }}
+            icon={"arrow-right"}
           >
             Start to Join
           </Button>
@@ -45,12 +64,22 @@ const LandingScreen = () => {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: "cover", // or "stretch"
+    resizeMode: "cover",
   },
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
+    paddingBottom: "40%",
+  },
+  logo: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+  },
+  buttonContainer: {
+    flexDirection: "column",
+    gap: 40,
   },
 });
 

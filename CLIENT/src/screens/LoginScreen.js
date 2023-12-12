@@ -5,13 +5,11 @@ import {
   ImageBackground,
   StyleSheet,
   ToastAndroid,
+  Image,
 } from "react-native";
 import { Button, PaperProvider, TextInput, Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { FormStyle } from "../Styles/FormStyle";
-import UserName from "../components/Forms/UserName";
-import Header from "../components/Forms/Header";
-import Password from "../components/Forms/Password";
 import fetchServices from "../services/fetchServices";
 import { useState } from "react";
 
@@ -22,23 +20,23 @@ const LoginScreen = () => {
   const [errors, setErrors] = useState(false);
 
   const [email, setEmail] = useState("");
-
   const [password, setPassword] = useState("");
   const [isError, setIsError] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const showToast = (message = "something went wrong") => {
     ToastAndroid.show(message, 3000);
   };
+
   const handleLogin = async () => {
     try {
+      setLoading(!loading);
+
       if (email === "" || password === "") {
         showToast("Please input required data");
         setIsError(true);
         return false;
       }
-      // API
 
       const url = "http://192.168.254.123:8000/api/login";
       const data = {
@@ -47,8 +45,6 @@ const LoginScreen = () => {
       };
 
       const result = await fetchServices.postData(url, data);
-      console.debug(result);
-      console.debug(data);
 
       if (result.message != null) {
         showToast(result?.message);
@@ -62,15 +58,12 @@ const LoginScreen = () => {
         return false;
       }
     } catch (e) {
-      console.log("Debug");
-
       console.debug(e.toString());
-      showToast(e.toString());
+      showToast("An error occurred");
     } finally {
       setLoading(false);
     }
   };
-  // password copied
 
   const toggleSecureEntry = () => {
     setHideEntry(!HideEntry);
@@ -82,95 +75,103 @@ const LoginScreen = () => {
         source={require("../images/login.png")}
         style={styles.backgroundImage}
       >
-        <SafeAreaView style={FormStyle.formContainer}>
+        <SafeAreaView style={styles.container}>
           <KeyboardAvoidingView
             behavior="padding"
-            style={FormStyle.formContainer}
+            style={styles.formContainer}
             keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 10}
           >
-            <Header />
-            <Text variant="headlineMedium" style={{ marginTop: 5 }}>
-              {" "}
+            {/* Add the logo here */}
+            <Image
+              source={require("../images/logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+
+            <Text variant="headlineLarge" style={{ marginTop: 5, fontWeight: 'bold', fontSize: 40 }}>
               Login
             </Text>
+
             <SafeAreaView style={{ gap: 7 }}>
-              {/* <UserName />
-              <Password /> */}
               <TextInput
-              style={FormStyle.input_style}
-              mode="outlined"
-              label="Email"
-              placeholder="Enter your email"
-              inputMode="email"
-              value={email}
-              error={isError}
-              onChangeText={(text) => {
-                setEmail(text);
-              }}
-            />
-            <TextInput
-              mode="outlined"
-              style={FormStyle.input_style}
-              label="Password"
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={HideEntry}
-              right={
-                <TextInput.Icon
-                  onPress={toggleSecureEntry}
-                  icon={HideEntry ? "eye" : "eye-off"}
-                />
-              }
-            />
-            <Button
-              onPress={() => {
-                navigator.navigate("AccountRecoveryScreen");
-              }}
-            >
-              Forgot password?
-            </Button>
+                style={FormStyle.input_style}
+                mode="outlined"
+                label="Email"
+                placeholder="Enter your email"
+                inputMode="email"
+                value={email}
+                error={isError}
+                onChangeText={(text) => {
+                  setEmail(text);
+                }}
+              />
+              <TextInput
+                mode="outlined"
+                style={FormStyle.input_style}
+                label="Password"
+                placeholder="Enter your password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={HideEntry}
+                right={
+                  <TextInput.Icon
+                    onPress={toggleSecureEntry}
+                    icon={HideEntry ? "eye" : "eye-off"}
+                  />
+                }
+              />
+              <Button
+                onPress={() => {
+                  navigator.navigate("AccountRecoveryScreen");
+                }}
+              >
+                Forgot password?
+              </Button>
             </SafeAreaView>
             <Button
-            style={FormStyle.button_style}
-            mode="contained-tonal"
-            icon="login"
-            onPress={handleLogin}
-            loading={loading}
-            disabled={loading}
-          >
-            Log in
-          </Button>
+              style={{ ...FormStyle.button_style, backgroundColor: 'black' }}
+              mode="contained-tonal"
+              icon="login"
+              onPress={handleLogin}
+              loading={loading}
+              disabled={loading}
+              labelStyle={{ color: 'white' }} // Set the text color here
+            >
+              Log in
+            </Button>
 
-          <SafeAreaView
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text>Not a member?</Text>
+
+
+
+            <SafeAreaView
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Text>Not a member?</Text>
+              <Button
+                mode="text"
+                onPress={() => {
+                  navigator.navigate("RegisterScreen");
+                }}
+                loading={loading}
+                disabled={loading}
+              >
+                Sign up now
+              </Button>
+            </SafeAreaView>
             <Button
               mode="text"
               onPress={() => {
-                navigator.navigate("RegisterScreen");
+                navigator.navigate("LandingScreen");
               }}
               loading={loading}
               disabled={loading}
             >
-              Sign up now
+              go back
             </Button>
-          </SafeAreaView>
-          <Button
-            mode="text"
-            onPress={() => {
-              navigator.navigate("LandingScreen");
-            }}
-            loading={loading}
-            disabled={loading}
-          >
-            go back
-          </Button>
           </KeyboardAvoidingView>
         </SafeAreaView>
       </ImageBackground>
@@ -181,19 +182,28 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: "cover", // or "stretch"
+    resizeMode: "cover",
   },
   container: {
-    justifyContent: "center",
-    paddingHorizontal: 16,
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: "23.2%",
   },
-  inputContainerStyle: {
-    marginBottom: 16,
+  formContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingBottom: "40%",
   },
-  fontSize: {
-    fontSize: 18,
+  logo: {
+    width: 100,
+    height: 100,
+    position: "absolute",
+    top: 10,
+    left: -11,
+    alignSelf: 'flex-start',
   },
 });
 
 export default LoginScreen;
-
