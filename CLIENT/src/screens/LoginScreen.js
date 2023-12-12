@@ -13,8 +13,6 @@ import { FormStyle } from "../Styles/FormStyle";
 import fetchServices from "../services/fetchServices";
 import { useState } from "react";
 
-import Toast from "react-native-root-toast";
-
 const LoginScreen = () => {
   const navigator = useNavigation();
 
@@ -27,7 +25,7 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const showToast = (message = "something went wrong") => {
-    Toast.show(message, 3000);
+    ToastAndroid.show(message, 3000);
   };
 
   const handleLogin = async () => {
@@ -81,7 +79,7 @@ const LoginScreen = () => {
           <KeyboardAvoidingView
             behavior="padding"
             style={styles.formContainer}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 10}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 15}
           >
             {/* Add the logo here */}
             <Image
@@ -90,7 +88,10 @@ const LoginScreen = () => {
               resizeMode="contain"
             />
 
-            <Text variant="headlineLarge" style={{ marginTop: 5, fontWeight: 'bold', fontSize: 40 }}>
+            <Text
+              variant="headlineLarge"
+              style={{ marginTop: 5, fontWeight: "bold", fontSize: 40 }}
+            >
               Login
             </Text>
 
@@ -131,57 +132,14 @@ const LoginScreen = () => {
               </Button>
             </SafeAreaView>
             <Button
-<<<<<<< HEAD
-              style={FormStyle.button_style}
-              mode="contained-tonal"
-              icon="login"
-              // onPress={handleLogin}                                            FOR TESTING
-              onPress={() => {
-                navigator.navigate("HomeScreen");
-=======
-              style={{ ...FormStyle.button_style, backgroundColor: 'black' }}
+              style={{ ...FormStyle.button_style, backgroundColor: "black" }}
               mode="contained-tonal"
               icon="login"
               onPress={handleLogin}
               loading={loading}
               disabled={loading}
-              labelStyle={{ color: 'white' }} // Set the text color here
+              labelStyle={{ color: "white" }} // Set the text color here
             >
-              Log in
-            </Button>
-
-
-
-
-            <SafeAreaView
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text>Not a member?</Text>
-              <Button
-                mode="text"
-                onPress={() => {
-                  navigator.navigate("RegisterScreen");
-                }}
-                loading={loading}
-                disabled={loading}
-              >
-                Sign up now
-              </Button>
-            </SafeAreaView>
-            <Button
-              mode="text"
-              onPress={() => {
-                navigator.navigate("LandingScreen");
->>>>>>> ed43ffea32e223dab980aba2ffa383d41edb331c
-              }}
-              loading={loading}
-              disabled={loading}
-            >
-<<<<<<< HEAD
               Log in
             </Button>
 
@@ -212,8 +170,6 @@ const LoginScreen = () => {
               loading={loading}
               disabled={loading}
             >
-=======
->>>>>>> ed43ffea32e223dab980aba2ffa383d41edb331c
               go back
             </Button>
           </KeyboardAvoidingView>
@@ -246,7 +202,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     left: -11,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
 });
 

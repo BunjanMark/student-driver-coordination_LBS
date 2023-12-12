@@ -5,11 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { ToastAndroid } from "react-native";
 import { useState } from "react";
 import fetchServices from "../services/fetchServices";
-<<<<<<< HEAD
-import Toast from "react-native-root-toast";
-=======
 
->>>>>>> ed43ffea32e223dab980aba2ffa383d41edb331c
 const RegisterScreen = () => {
   const navigator = useNavigation();
   const [name, setName] = useState("");
@@ -24,13 +20,8 @@ const RegisterScreen = () => {
     setHideEntry(!HideEntry);
   };
 
-<<<<<<< HEAD
-  const showToast = (message = "something went wrong") => {
-    Toast.show(message, 3000);
-=======
   const showToast = (message = "Something went wrong") => {
     ToastAndroid.show(message, ToastAndroid.SHORT);
->>>>>>> ed43ffea32e223dab980aba2ffa383d41edb331c
   };
 
   const handleRegistration = async () => {
@@ -95,8 +86,16 @@ const RegisterScreen = () => {
           resizeMode="contain"
         />
 
-        <Text variant="headlineLarge" style={{ marginTop: 5, color: 'black', fontWeight: 'bold', fontSize: 40 }}>
-          Register{name}{email}{password}{repassword}
+        <Text
+          variant="headlineLarge"
+          style={{
+            marginTop: 5,
+            color: "black",
+            fontWeight: "bold",
+            fontSize: 40,
+          }}
+        >
+          Register
         </Text>
 
         <TextInput
@@ -151,76 +150,12 @@ const RegisterScreen = () => {
         <Button
           loading={loading}
           disabled={loading}
-          style={{ ...styles.button_style, backgroundColor: 'black' }}
+          style={{ ...styles.button_style, backgroundColor: "black" }}
           mode="contained-tonal"
           icon="account-plus"
           onPress={handleRegistration}
-          labelStyle={{ color: 'white' }}
+          labelStyle={{ color: "white" }}
         >
-<<<<<<< HEAD
-          <Header />
-          <Text variant="headlineMedium" style={{ marginTop: 5 }}>
-            {" "}
-            Register
-          </Text>
-          <TextInput
-            style={FormStyle.input_style}
-            mode="outlined"
-            label="name"
-            error={isError}
-            value={name}
-            onChangeText={(text) => {
-              setName(text);
-            }}
-          />
-          <TextInput
-            style={FormStyle.input_style}
-            mode="outlined"
-            label="Email"
-            placeholder="Enter your mobile number"
-            inputMode="email"
-            value={email}
-            error={isError}
-            onChangeText={(text) => {
-              setEmail(text);
-            }}
-          />
-          <TextInput
-            mode="outlined"
-            style={FormStyle.input_style}
-            label="Password"
-            placeholder="Enter your password"
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-            }}
-            secureTextEntry={HideEntry}
-            error={isError}
-            right={
-              <TextInput.Icon
-                onPress={toggleSecureEntry}
-                icon={HideEntry ? "eye" : "eye-off"}
-              />
-            }
-          />
-          <TextInput
-            mode="outlined"
-            style={FormStyle.input_style}
-            label="Confirm password"
-            placeholder="Re-nter your password"
-            value={repassword}
-            onChangeText={(text) => {
-              setRepassword(text);
-            }}
-            secureTextEntry={HideEntry}
-            right={
-              <TextInput.Icon
-                onPress={toggleSecureEntry}
-                icon={HideEntry ? "eye" : "eye-off"}
-              />
-            }
-          />
-=======
           Register
         </Button>
 
@@ -232,7 +167,6 @@ const RegisterScreen = () => {
           }}
         >
           <Text>Already have an account?</Text>
->>>>>>> ed43ffea32e223dab980aba2ffa383d41edb331c
           <Button
             loading={loading}
             disabled={loading}
@@ -241,10 +175,7 @@ const RegisterScreen = () => {
             Login now
           </Button>
         </SafeAreaView>
-        <Button
-          mode="text"
-          onPress={() => navigator.navigate("LandingScreen")}
-        >
+        <Button mode="text" onPress={() => navigator.navigate("LandingScreen")}>
           Go back
         </Button>
       </SafeAreaView>

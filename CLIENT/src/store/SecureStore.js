@@ -18,6 +18,7 @@ const SecureStore = () => {
     return SecureStore.getItemAsync("task");
   };
   const oldTasks = SecureStore.getItemAsync("tasks");
+ 
   return (
     <View>
       <TextInput onChangeText={setTask} />

@@ -35,9 +35,9 @@ const LandingScreen = () => {
           variant="headlineMedium"
           style={{
             fontSize: 35,
-            color: 'black',
+            color: "black",
             marginBottom: 10,
-            fontWeight: 'bold',
+            fontWeight: "bold",
           }}
         >
           HotSpot
@@ -49,8 +49,12 @@ const LandingScreen = () => {
             onPress={() => {
               navigator.navigate("RegisterScreen");
             }}
-            style={{ backgroundColor: 'black', width: 300, height: 40 }}
-            contentStyle={{ flexDirection: 'row-reverse', justifyContent: 'center', alignItems: 'center' }}
+            style={{ backgroundColor: "black", width: 300, height: 40 }}
+            contentStyle={{
+              flexDirection: "row-reverse",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
             icon={"arrow-right"}
           >
             Start to Join
