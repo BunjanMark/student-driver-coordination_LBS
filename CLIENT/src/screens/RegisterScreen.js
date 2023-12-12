@@ -2,7 +2,7 @@ import React from "react";
 import { SafeAreaView, ImageBackground, StyleSheet, Image } from "react-native";
 import { Text, Button, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { ToastAndroid } from "react-native";
+import { Toast } from "react-native-root-toast";
 import { useState } from "react";
 import fetchServices from "../services/fetchServices";
 
@@ -21,7 +21,7 @@ const RegisterScreen = () => {
   };
 
   const showToast = (message = "Something went wrong") => {
-    ToastAndroid.show(message, ToastAndroid.SHORT);
+    Toast.show(message, ToastAndroid.SHORT);
   };
 
   const handleRegistration = async () => {

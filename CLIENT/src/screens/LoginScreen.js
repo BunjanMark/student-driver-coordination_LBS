@@ -4,7 +4,6 @@ import {
   KeyboardAvoidingView,
   ImageBackground,
   StyleSheet,
-  ToastAndroid,
   Image,
 } from "react-native";
 import { Button, PaperProvider, TextInput, Text } from "react-native-paper";
@@ -12,7 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { FormStyle } from "../Styles/FormStyle";
 import fetchServices from "../services/fetchServices";
 import { useState } from "react";
-
+import Toast from "react-native-root-toast";
 const LoginScreen = () => {
   const navigator = useNavigation();
 
@@ -25,7 +24,7 @@ const LoginScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const showToast = (message = "something went wrong") => {
-    ToastAndroid.show(message, 3000);
+    Toast.show(message, 3000);
   };
 
   const handleLogin = async () => {
