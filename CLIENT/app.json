@@ -13,12 +13,16 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "AIzaSyBHm2dKKgwCE_9ub4Pd9PRcb17aNv2kVMI"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "package": "android.package.map"
       },
       "config": {
         "googleMaps": {
@@ -26,6 +30,7 @@
         }
       }
     },
+
     "web": {
       "favicon": "./assets/favicon.png"
     }
