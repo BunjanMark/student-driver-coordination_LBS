@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 
 const GoogleMapView = () => {
   return (
-    <View style={{ margin: 15 }}>
+    <View>
       <MapView
         style={styles.map}
         provider="google"
