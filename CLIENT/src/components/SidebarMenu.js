@@ -2,78 +2,114 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { SearchBar } from "react-native-elements";
-const SidebarMenu = () => {
-  state = {
-    search: "",
+
+const FixedHeader = () => {
+  const [search, setSearch] = useState("");
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const updateSearch = (text) => {
+    setSearch(text);
   };
 
-  updateSearch = (search) => {
-    this.setState({ search });
+  const clearSearch = () => {
+    setSearch("");
   };
-  const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => {
-    setIsOpen(!isOpen);
+    setSidebarOpen(!isSidebarOpen);
   };
 
-  const [search, setSearch] = useState("");
   return (
-    <View
-      style={
-        (styles.container,
-        { backgroundColor: "red", flexDirection: "row", gap: 150 })
-      }
-    >
-      <TouchableOpacity onPress={toggleSidebar} style={styles.sidebarButton}>
+    <View style={styles.header}>
+      <TouchableOpacity style={styles.sidebarButton} onPress={toggleSidebar}>
         <Icon name="menu" size={25} color="black" />
       </TouchableOpacity>
 
-      {isOpen && (
+      <View style={styles.searchBar}>
+        <SearchBar
+          placeholder="Search..."
+          placeholderTextColor="black"
+          onChangeText={updateSearch}
+          onClear={clearSearch}
+          value={search}
+          containerStyle={styles.searchBarContainer}
+          inputContainerStyle={styles.searchBarInputContainer}
+          searchIcon={{ color: "black", size: 25 }}
+          inputStyle={{ color: "black" }}
+          clearIcon={{ color: "black" }}
+        />
+      </View>
+
+      {isSidebarOpen && (
         <View style={styles.sidebar}>
           <TouchableOpacity style={styles.sidebarItem}>
-            <Icon name="home" size={20} color="black" />
-            <Text>Home</Text>
+            <Icon name="home" size={20} color="white" />
+            <Text style={styles.sidebarText}>Home</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.sidebarItem}>
-            <Icon name="information-circle" size={20} color="black" />
-            <Text>About</Text>
+            <Icon name="information-circle" size={20} color="white" />
+            <Text style={styles.sidebarText}>About</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.sidebarItem}>
-            <Icon name="settings" size={20} color="black" />
-            <Text>Settings</Text>
+            <Icon name="settings" size={20} color="white" />
+            <Text style={styles.sidebarText}>Settings</Text>
           </TouchableOpacity>
         </View>
       )}
-      <SearchBar
-        placeholder="Type Here..."
-        onChangeText={this.updateSearch}
-        value={search}
-      />
     </View>
   );
 };
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  header: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#65B741",
+    padding: 10,
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
   },
   sidebarButton: {
-    padding: 10,
+    padding: 15,
+  },
+  searchBar: {
+    flex: 1,
+    marginRight: 10,
+  },
+  searchBarContainer: {
+    backgroundColor: "transparent",
+    borderBottomColor: "transparent",
+    borderTopColor: "transparent",
+    padding: 0,
+    margin: 0,
+  },
+  searchBarInputContainer: {
+    backgroundColor: "transparent",
   },
   sidebar: {
-    flex: 1,
-    padding: 10,
+    position: "absolute",
+    top: 60,
+    left: 10,
+    padding: 15,
+    zIndex: 1,
+    borderRadius: 30,
+    backgroundColor: "gray",
   },
   sidebarItem: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
+    borderWidth: 7,
+    borderColor: "transparent",
   },
-  mainContent: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingRight: 40,
+  sidebarText: {
+    color: "white",
+    marginLeft: 10,
+    fontSize: 16,
   },
 });
-export default SidebarMenu;
+
+export default FixedHeader;
