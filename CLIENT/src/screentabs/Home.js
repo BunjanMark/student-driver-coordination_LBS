@@ -5,24 +5,16 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SidebarMenu from "../components/SidebarMenu";
 import MapView from "react-native-maps";
+import GoogleMapView from "../components/GoogleMapView/GoogleMapView";
 export default class App extends React.Component {
   render() {
     return (
       <SafeAreaView>
         <SidebarMenu />
         <SafeAreaView>
-          <MapView style={styles.map} />
+          <GoogleMapView />
         </SafeAreaView>
       </SafeAreaView>
     );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    width: "100%",
-    height: "100%",
-  },
-});

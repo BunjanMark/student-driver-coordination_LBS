@@ -22,12 +22,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff",
-        "package": "android.package.map"
-      },
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyBHm2dKKgwCE_9ub4Pd9PRcb17aNv2kVMI"
-        }
+        "package": "android.package.maps",
+        "googleMapsApiKey": "AIzaSyBHm2dKKgwCE_9ub4Pd9PRcb17aNv2kVMI"
       }
     },
 
