@@ -30,10 +30,10 @@ const HomeScreen = () => {
         }}
       />
       <Tab.Screen
-        name="Time"
+        name="History"
         component={Notif}
         options={{
-          tabBarLabel: "Time",
+          tabBarLabel: "History",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="clock" color={color} size={26} />
           ),
@@ -41,10 +41,10 @@ const HomeScreen = () => {
       />
 
       <Tab.Screen
-        name="Account"
+        name="Profile"
         component={Profile}
         options={{
-          tabBarLabel: "Account",
+          tabBarLabel: "Profile",
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="account" color={color} size={26} />
           ),
