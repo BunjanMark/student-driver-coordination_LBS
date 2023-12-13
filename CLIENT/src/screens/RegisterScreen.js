@@ -40,7 +40,7 @@ const RegisterScreen = () => {
         return false;
       }
 
-      const url = "http://192.168.254.110:8000/api/register";
+      const url = "http://192.168.254.123:8000/api/register";
       const data = {
         name,
         email,
