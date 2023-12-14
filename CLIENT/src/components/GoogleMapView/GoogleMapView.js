@@ -1,9 +1,25 @@
-import { View, Text } from "react-native";
-import React from "react";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Platform, Text, View, StyleSheet } from "react-native";
+
+import * as Location from "expo-location";
+import MapView from "react-native-maps";
 
 const GoogleMapView = () => {
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
   return (
     <View>
       <MapView
@@ -12,6 +28,7 @@ const GoogleMapView = () => {
         showsUserLocation={true}
         showsMyLocationButton={true}
         showsCompass={true}
+        showsTraffic={true} //Tobe further develop as option
       ></MapView>
     </View>
   );
