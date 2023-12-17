@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { SearchBar } from "react-native-elements";
 
@@ -93,13 +99,18 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   sidebar: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     position: "absolute",
     top: 60,
-    left: 10,
+    left: -5,
     padding: 15,
     zIndex: 1,
-    borderRadius: 30,
-    backgroundColor: "gray",
+    borderBottomRightRadius: 20,
+    backgroundColor: "rgba(52, 52, 52, 0.8)",
+    width: "60%",
+    height: 500,
   },
   sidebarItem: {
     flexDirection: "row",
