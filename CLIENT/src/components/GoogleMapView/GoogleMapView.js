@@ -19,7 +19,12 @@ const GoogleMapView = () => {
       setLocation(location);
     })();
   }, []);
-
+  const shareLocation = () => {
+    // Code to share the location with another Expo app
+    // You can use various methods like API calls, sockets, etc. to share the location data
+    // For simplicity, you can just log it here
+    console.log("Location shared:", location);
+  };
   return (
     <View>
       <MapView

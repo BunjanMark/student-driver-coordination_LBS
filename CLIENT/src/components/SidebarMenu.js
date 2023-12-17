@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(52, 52, 52, 0.8)",
     width: "60%",
     height: 500,
+    gap: 50,
   },
   sidebarItem: {
     flexDirection: "row",
