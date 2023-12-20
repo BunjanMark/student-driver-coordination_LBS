@@ -7,8 +7,12 @@ import io from "socket.io-client";
 
 // const socket = io("http://192.168.254.110:3000"); // Replace with your server IP
 
-const serverAddress = "wss://websocket-server-hopspot.glitch.me";
-const ws = new WebSocket(serverAddress);
+const socket = io("wss://websocket-server-hopspot.glitch.me/");
+// const ws = new io(socket, {
+//   headers: {
+//     "user-agent": "Custom WS client",
+//   },
+// });
 const GoogleMapView = () => {
   const [location, setLocation] = useState(null);
   const [locationUpdates, setLocationUpdates] = useState([]);
