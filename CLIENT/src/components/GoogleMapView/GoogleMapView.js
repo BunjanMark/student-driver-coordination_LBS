@@ -5,8 +5,10 @@ import * as Location from "expo-location";
 import MapView from "react-native-maps";
 import io from "socket.io-client";
 
-const socket = io("http://192.168.254.110:3000"); // Replace with your server IP
+// const socket = io("http://192.168.254.110:3000"); // Replace with your server IP
 
+const serverAddress = "wss://websocket-server-hopspot.glitch.me";
+const ws = new WebSocket(serverAddress);
 const GoogleMapView = () => {
   const [location, setLocation] = useState(null);
   const [locationUpdates, setLocationUpdates] = useState([]);
