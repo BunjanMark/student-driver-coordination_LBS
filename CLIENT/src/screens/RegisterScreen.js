@@ -1,10 +1,11 @@
 import React from "react";
-import { SafeAreaView, ImageBackground, StyleSheet, Image } from "react-native";
+import { SafeAreaView, ImageBackground, StyleSheet, Image, Platform } from "react-native";
 import { Text, Button, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-root-toast";
 import { useState } from "react";
 import fetchServices from "../services/fetchServices";
+import { widthPercentageToDP, heightPercentageToDP } from "react-native-responsive-screen";
 
 const RegisterScreen = () => {
   const navigator = useNavigation();
@@ -89,17 +90,17 @@ const RegisterScreen = () => {
         <Text
           variant="headlineLarge"
           style={{
-            marginTop: 5,
+            marginTop: heightPercentageToDP("1%"),
             color: "black",
             fontWeight: "bold",
-            fontSize: 40,
+            fontSize: widthPercentageToDP("8%"),
           }}
         >
           Register
         </Text>
 
         <TextInput
-          style={{ ...styles.input_style, borderRadius: 10 }}
+          style={{ ...styles.inputStyle, borderRadius: 10 }}
           mode="outlined"
           label="Name"
           error={isError}
@@ -107,7 +108,7 @@ const RegisterScreen = () => {
           onChangeText={(text) => setName(text)}
         />
         <TextInput
-          style={{ ...styles.input_style, borderRadius: 10 }}
+          style={{ ...styles.inputStyle, borderRadius: 10 }}
           mode="outlined"
           label="Email"
           placeholder="Enter your email"
@@ -118,7 +119,7 @@ const RegisterScreen = () => {
         />
         <TextInput
           mode="outlined"
-          style={{ ...styles.input_style, borderRadius: 10 }}
+          style={{ ...styles.inputStyle, borderRadius: 10 }}
           label="Password"
           placeholder="Enter your password"
           value={password}
@@ -134,7 +135,7 @@ const RegisterScreen = () => {
         />
         <TextInput
           mode="outlined"
-          style={{ ...styles.input_style, borderRadius: 10 }}
+          style={{ ...styles.inputStyle, borderRadius: 10 }}
           label="Confirm password"
           placeholder="Re-enter your password"
           value={repassword}
@@ -150,7 +151,7 @@ const RegisterScreen = () => {
         <Button
           loading={loading}
           disabled={loading}
-          style={{ ...styles.button_style, backgroundColor: "black" }}
+          style={{ ...styles.buttonStyle, backgroundColor: "black" }}
           mode="contained-tonal"
           icon="account-plus"
           onPress={handleRegistration}
@@ -192,20 +193,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingBottom: "3%",
+    paddingBottom: heightPercentageToDP("1%"),
   },
   logo: {
     position: "absolute",
-    top: 10,
-    left: 10,
+    top: heightPercentageToDP("1%"),
+    left: widthPercentageToDP("3%"),
   },
-  input_style: {
-    width: 300,
-    marginBottom: 10,
+  inputStyle: {
+    width: widthPercentageToDP("80%"),
+    marginBottom: heightPercentageToDP("2%"),
   },
-  button_style: {
-    width: 300,
-    height: 40,
+  buttonStyle: {
+    width: widthPercentageToDP("80%"),
+    height: heightPercentageToDP("6%"),
+    marginBottom: heightPercentageToDP("2%"),
   },
 });
 
