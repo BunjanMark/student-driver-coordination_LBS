@@ -2,17 +2,13 @@ import React from "react";
 import { SafeAreaView, ImageBackground, StyleSheet, Image } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { widthPercentageToDP, heightPercentageToDP } from "react-native-responsive-screen";
 
 const LandingScreen = () => {
   const navigator = useNavigation();
 
-  // Assuming your current logo dimensions are 50x50
-  const currentLogoWidth = 50;
-  const currentLogoHeight = 50;
-  const newSizeMultiplier = 2; // 10% bigger
-
-  const newLogoWidth = currentLogoWidth * newSizeMultiplier;
-  const newLogoHeight = currentLogoHeight * newSizeMultiplier;
+  const currentLogoWidth = widthPercentageToDP("25%"); // Adjust the percentage as needed
+  const currentLogoHeight = heightPercentageToDP("25%"); // Adjust the percentage as needed
 
   return (
     <ImageBackground
@@ -20,13 +16,12 @@ const LandingScreen = () => {
       style={styles.backgroundImage}
     >
       <SafeAreaView style={styles.container}>
-        {/* Logo positioned at the top left corner */}
         <Image
           source={require("../images/logo.png")}
           style={{
             ...styles.logo,
-            width: newLogoWidth,
-            height: newLogoHeight,
+            width: currentLogoWidth,
+            height: currentLogoHeight,
           }}
           resizeMode="contain"
         />
@@ -34,22 +29,21 @@ const LandingScreen = () => {
         <Text
           variant="headlineMedium"
           style={{
-            fontSize: 35,
+            fontSize: widthPercentageToDP("6%"), // Adjust the percentage as needed
             color: "black",
-            marginBottom: 10,
+            marginBottom: heightPercentageToDP("2%"), // Adjust the percentage as needed
             fontWeight: "bold",
           }}
         >
           HotSpot
         </Text>
         <SafeAreaView style={styles.buttonContainer}>
-          {/* Your other components */}
           <Button
             mode="contained"
             onPress={() => {
-              navigator.navigate("LoginScreen");
+              navigator.navigate("HomeScreen");
             }}
-            style={{ backgroundColor: "black", width: 300, height: 40 }}
+            style={{ backgroundColor: "black", width: widthPercentageToDP("70%"), height: heightPercentageToDP("6%") }}
             contentStyle={{
               flexDirection: "row-reverse",
               justifyContent: "center",
@@ -74,16 +68,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingBottom: "40%",
+    paddingBottom: heightPercentageToDP("15%"), // Adjust the percentage as needed
   },
   logo: {
     position: "absolute",
-    top: 10,
-    left: 10,
+    top: heightPercentageToDP("-4%"), // Adjust the percentage as needed
+    left: widthPercentageToDP("3%"), // Adjust the percentage as needed
   },
   buttonContainer: {
     flexDirection: "column",
-    gap: 40,
+    gap: heightPercentageToDP("4%"), // Adjust the percentage as needed
   },
 });
 

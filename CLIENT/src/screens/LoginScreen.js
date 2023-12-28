@@ -5,19 +5,18 @@ import {
   ImageBackground,
   StyleSheet,
   Image,
+  Platform,
 } from "react-native";
-import { Button, PaperProvider, TextInput, Text } from "react-native-paper";
+import { Button, Provider as PaperProvider, TextInput, Text } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { FormStyle } from "../Styles/FormStyle";
-import fetchServices from "../services/fetchServices";
+import { widthPercentageToDP, heightPercentageToDP } from "react-native-responsive-screen";
 import { useState } from "react";
 import Toast from "react-native-root-toast";
+
 const LoginScreen = () => {
   const navigator = useNavigation();
 
   const [HideEntry, setHideEntry] = useState(true);
-  const [errors, setErrors] = useState(false);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isError, setIsError] = useState(false);
@@ -76,11 +75,10 @@ const LoginScreen = () => {
       >
         <SafeAreaView style={styles.container}>
           <KeyboardAvoidingView
-            behavior="padding"
+            behavior={Platform.OS === "ios" ? "padding" : null}
             style={styles.formContainer}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 15}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : heightPercentageToDP("15%")}
           >
-            {/* Add the logo here */}
             <Image
               source={require("../images/logo.png")}
               style={styles.logo}
@@ -89,14 +87,14 @@ const LoginScreen = () => {
 
             <Text
               variant="headlineLarge"
-              style={{ marginTop: 5, fontWeight: "bold", fontSize: 40 }}
+              style={{ marginTop: 5, fontWeight: "bold", fontSize: widthPercentageToDP("8%") }}
             >
               Login
             </Text>
 
-            <SafeAreaView style={{ gap: 7 }}>
+            <SafeAreaView style={{ gap: heightPercentageToDP("1%") }}>
               <TextInput
-                style={FormStyle.input_style}
+                style={styles.inputStyle}
                 mode="outlined"
                 label="Email"
                 placeholder="Enter your email"
@@ -109,7 +107,7 @@ const LoginScreen = () => {
               />
               <TextInput
                 mode="outlined"
-                style={FormStyle.input_style}
+                style={styles.inputStyle}
                 label="Password"
                 placeholder="Enter your password"
                 value={password}
@@ -131,13 +129,13 @@ const LoginScreen = () => {
               </Button>
             </SafeAreaView>
             <Button
-              style={{ ...FormStyle.button_style, backgroundColor: "black" }}
+              style={{ ...styles.buttonStyle, backgroundColor: "black" }}
               mode="contained-tonal"
               icon="login"
               onPress={handleLogin}
               loading={loading}
               disabled={loading}
-              labelStyle={{ color: "white" }} // Set the text color here
+              labelStyle={{ color: "white" }}
             >
               Log in
             </Button>
@@ -187,21 +185,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingBottom: "23.2%",
+    paddingBottom: heightPercentageToDP("8%"),
   },
   formContainer: {
     flex: 1,
     justifyContent: "flex-end",
     alignItems: "center",
-    paddingBottom: "40%",
+    paddingBottom: heightPercentageToDP("1%"),
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: widthPercentageToDP("25%"),
+    height: heightPercentageToDP("25%"),
     position: "absolute",
-    top: 10,
-    left: -11,
+    top: heightPercentageToDP("-4%"),
+    left: widthPercentageToDP("-7%"),
     alignSelf: "flex-start",
+  },
+  inputStyle: {
+    // Define your TextInput styles here
+    width: widthPercentageToDP("80%"),
+    marginBottom: heightPercentageToDP("2%"),
+  },
+  buttonStyle: {
+    // Define your Button styles here
+    width: widthPercentageToDP("80%"),
+    height: heightPercentageToDP("6%"),
+    marginBottom: heightPercentageToDP("2%"),
   },
 });
 
