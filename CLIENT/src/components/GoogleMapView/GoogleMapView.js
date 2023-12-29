@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, Text, View, StyleSheet } from "react-native";
+import {
+  SafeAreaView,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { Button, Icon } from "react-native-elements";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
@@ -82,14 +88,45 @@ const GoogleMapView = () => {
 
   return (
     <SafeAreaView>
-      <Legend />
-      <Button
-        buttonStyle={styles.button}
-        titleStyle={styles.buttonText}
-        icon={<Icon name="map-marker" type="font-awesome" color="black" />}
-        title="  Share Location"
+      {/* <Legend /> */}
+      <TouchableOpacity
+        style={
+          (styles.button,
+          {
+            backgroundColor: "transparent",
+            top: "0%",
+            right: "32%",
+            zIndex: 1,
+            position: "absolute",
+
+            height: 100,
+          })
+        }
         onPress={shareLocation}
-      />
+        activeOpacity={0.7}
+      >
+        <Icon
+          name="map-marker"
+          type="font-awesome"
+          color="black"
+          style={styles.icon}
+        />
+        <Text style={styles.buttonText}>Share Location</Text>
+      </TouchableOpacity>
+      {/* <TouchableOpacity
+        onPress={shareLocation}
+        style={{
+          backgroundColor: "#575757",
+          bottom: 400,
+          zIndex: 1,
+          position: "absolute",
+
+          height: 100,
+        }}
+      >
+        <Text>Press me1</Text>
+      </TouchableOpacity> */}
+
       <MapView
         style={styles.map}
         provider="google"
@@ -123,16 +160,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  button: {
+    backgroundColor: "#575757",
+    position: "absolute",
+    bottom: 400,
+    zIndex: 1,
+    height: 100,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  buttonText: {
+    color: "black",
+    fontSize: 20,
+  },
   map: {
     width: "100%",
     height: "100%",
-  },
-  button: {
-    padding: 5,
-    backgroundColor: "lightgreen",
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
   },
   buttonText: {
     color: "black",
