@@ -1,11 +1,20 @@
 import React from "react";
-import { SafeAreaView, ImageBackground, StyleSheet, Image, Platform } from "react-native";
+import {
+  SafeAreaView,
+  ImageBackground,
+  StyleSheet,
+  Image,
+  Platform,
+} from "react-native";
 import { Text, Button, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import Toast from "react-native-root-toast";
 import { useState } from "react";
 import fetchServices from "../services/fetchServices";
-import { widthPercentageToDP, heightPercentageToDP } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP,
+  heightPercentageToDP,
+} from "react-native-responsive-screen";
 
 const RegisterScreen = () => {
   const navigator = useNavigation();
@@ -41,7 +50,7 @@ const RegisterScreen = () => {
         return false;
       }
 
-      const url = "http://192.168.254.110:8000/api/register";
+      const url = "http://192.168.254.113:8000/api/register";
       const data = {
         name,
         email,

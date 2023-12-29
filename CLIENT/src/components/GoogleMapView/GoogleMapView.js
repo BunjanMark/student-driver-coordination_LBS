@@ -4,7 +4,7 @@ import { Platform, Text, View, StyleSheet, Button } from "react-native";
 import * as Location from "expo-location";
 import MapView from "react-native-maps";
 import io from "socket.io-client";
-
+import { Marker } from "react-native-maps";
 // const socket = io("http://192.168.254.110:3000"); // Replace with your server IP
 
 const socket = io("wss://websocket-server-hopspot.glitch.me/");
@@ -40,9 +40,11 @@ const GoogleMapView = () => {
       console.log("Location update received:", data);
 
       // Update the locationUpdates state to trigger a re-render
-      setLocationUpdates((prevUpdates) => [...prevUpdates, data]);
+      setLocationUpdates((prevUpdates) => [
+        ...prevUpdates,
+        { ...data, timestamp: new Date().toLocaleTimeString() }, // Include timestamp
+      ]);
     });
-
     // Clean up the event listener when the component unmounts
     return () => {
       socket.off("locationUpdate");
@@ -66,14 +68,6 @@ const GoogleMapView = () => {
 
   return (
     <View>
-      <View style={styles.updatesContainer}>
-        <Text>Location Updates:</Text>
-        {locationUpdates.map((update) => (
-          <Text key={update.deviceNumber}>
-            Device {update.deviceNumber}: {JSON.stringify(update.location)}
-          </Text>
-        ))}
-      </View>
       <Button title="Share Location" onPress={shareLocation} />
       <MapView
         style={styles.map}
@@ -82,7 +76,19 @@ const GoogleMapView = () => {
         showsMyLocationButton={true}
         showsCompass={true}
         showsTraffic={true} //Tobe further develop as option
-      ></MapView>
+      >
+        {locationUpdates.map((update) => (
+          <Marker
+            key={update.deviceNumber}
+            coordinate={{
+              latitude: update.location.latitude,
+              longitude: update.location.longitude,
+            }}
+            title={`Device ${update.deviceNumber}`}
+            description={`Last Update: ${update.timestamp}`}
+          />
+        ))}
+      </MapView>
     </View>
   );
 };
