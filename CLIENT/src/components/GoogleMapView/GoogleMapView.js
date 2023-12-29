@@ -134,11 +134,12 @@ const GoogleMapView = () => {
         showsMyLocationButton={true}
         showsCompass={true}
         showsTraffic={true}
-        region={{
-          latitude: location?.coords.latitude || 0,
-          longitude: location?.coords.longitude || 0,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+        tintColor="green"
+        initialRegion={{
+          latitude: 8.486097, // Local latitude
+          longitude: 124.657379, // Local longitude
+          latitudeDelta: 0.1522, // Zoom level
+          longitudeDelta: 0.0321, // Zoom level
         }}
       >
         {locationUpdates.map((update, index) => (
