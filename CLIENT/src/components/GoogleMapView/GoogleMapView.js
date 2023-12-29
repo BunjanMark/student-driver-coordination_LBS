@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Platform, Text, View, StyleSheet, Button } from "react-native";
-
+import { SafeAreaView, Text, View, StyleSheet } from "react-native";
+import { Button, Icon } from "react-native-elements";
 import * as Location from "expo-location";
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import io from "socket.io-client";
-import { Marker } from "react-native-maps";
-// const socket = io("http://192.168.254.110:3000"); // Replace with your server IP
 
 const socket = io("wss://websocket-server-hopspot.glitch.me/");
-// const ws = new io(socket, {
-//   headers: {
-//     "user-agent": "Custom WS client",
-//   },
-// });
+
 const GoogleMapView = () => {
   const [location, setLocation] = useState(null);
   const [locationUpdates, setLocationUpdates] = useState([]);
+  const [userAddress, setUserAddress] = useState("");
 
   const shareLocation = async () => {
     try {
@@ -23,77 +18,107 @@ const GoogleMapView = () => {
       let location = await Location.getCurrentPositionAsync({});
       console.log("Location shared:", location);
 
-      // Emit the location data to the Socket.io server
-      socket.emit("updateLocation", {
-        location: {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        },
-      });
+      // Get the address from the coordinates using the Geocoding API
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=AIzaSyAkNA3MvoAczGTmO4gSqCbwKho1xPqRKyI`
+      );
+
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results.length > 0) {
+        // Extract the formatted address from the response
+        const formattedAddress = data.results[0].formatted_address;
+        console.log("Formatted Address:", formattedAddress);
+
+        // Set the location and address in state
+        setLocation(location);
+        setUserAddress(formattedAddress);
+
+        // Emit the location data to the Socket.io server
+        socket.emit("updateLocation", {
+          location: {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          },
+          address: formattedAddress, // Send the formatted address to the server
+        });
+      } else {
+        console.error("Geocoding API request failed");
+      }
     } catch (error) {
       console.error("Error sharing location:", error);
     }
   };
+
   useEffect(() => {
     // Listen for location updates from the server
     socket.on("locationUpdate", (data) => {
       console.log("Location update received:", data);
 
       // Update the locationUpdates state to trigger a re-render
-      setLocationUpdates((prevUpdates) => [
-        ...prevUpdates,
-        { ...data, timestamp: new Date().toLocaleTimeString() }, // Include timestamp
-      ]);
+      setLocationUpdates((prevUpdates) => [...prevUpdates, data]);
     });
+
     // Clean up the event listener when the component unmounts
     return () => {
       socket.off("locationUpdate");
     };
   }, []);
 
-  useEffect(() => {
-    // Listen for location updates from the server
-    socket.on("location", (data) => {
-      console.log("Location received:", data);
-
-      // Do something with the received location data, such as updating the UI.
-      // For simplicity, you can just log it here.
-    });
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      socket.off("location");
-    };
-  }, []);
+  const Legend = () => (
+    <View style={styles.legendContainer}>
+      <Text style={styles.legendText}>Legend:</Text>
+      <View style={styles.legendItem}>
+        <View style={[styles.legendColor, { backgroundColor: "blue" }]} />
+        <Text style={styles.legendLabel}>Vehicle A</Text>
+      </View>
+      <View style={styles.legendItem}>
+        <View style={[styles.legendColor, { backgroundColor: "red" }]} />
+        <Text style={styles.legendLabel}>Vehicle B</Text>
+      </View>
+      {/* Add more legend items as needed */}
+    </View>
+  );
 
   return (
-    <View>
-      <Button title="Share Location" onPress={shareLocation} />
+    <SafeAreaView>
+      <Legend />
+      <Button
+        buttonStyle={styles.button}
+        titleStyle={styles.buttonText}
+        icon={<Icon name="map-marker" type="font-awesome" color="black" />}
+        title="  Share Location"
+        onPress={shareLocation}
+      />
       <MapView
         style={styles.map}
         provider="google"
         showsUserLocation={true}
         showsMyLocationButton={true}
         showsCompass={true}
-        showsTraffic={true} //Tobe further develop as option
+        showsTraffic={true}
+        region={{
+          latitude: location?.coords.latitude || 0,
+          longitude: location?.coords.longitude || 0,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
       >
-        {locationUpdates.map((update) => (
+        {locationUpdates.map((update, index) => (
           <Marker
-            key={update.deviceNumber}
+            key={index}
             coordinate={{
               latitude: update.location.latitude,
               longitude: update.location.longitude,
             }}
-            title={`Device ${update.deviceNumber}`}
-            description={`Last Update: ${update.timestamp}`}
+            title={update.address}
           />
         ))}
       </MapView>
-    </View>
+    </SafeAreaView>
   );
 };
 
-export default GoogleMapView;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -102,4 +127,42 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+  button: {
+    padding: 5,
+    backgroundColor: "lightgreen",
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    color: "black",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  legendContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  legendText: {
+    marginRight: 5,
+    fontWeight: "bold",
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 10,
+  },
+  legendColor: {
+    width: 20,
+    height: 20,
+    marginRight: 5,
+    borderRadius: 10,
+  },
+  legendLabel: {
+    fontWeight: "bold",
+  },
 });
+
+export default GoogleMapView;
