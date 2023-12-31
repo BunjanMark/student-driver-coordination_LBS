@@ -44,7 +44,7 @@ const LoginScreen = () => {
         return false;
       }
 
-      const url = "http://192.168.254.113:8000/api/login";
+      const url = "https://d607-180-191-84-209.ngrok-free.app/api/login";
       const data = {
         email,
         password,

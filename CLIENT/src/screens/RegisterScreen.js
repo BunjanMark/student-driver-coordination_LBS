@@ -50,7 +50,7 @@ const RegisterScreen = () => {
         return false;
       }
 
-      const url = "http://192.168.254.113:8000/api/register";
+      const url = "https://d607-180-191-84-209.ngrok-free.app/api/register";
       const data = {
         name,
         email,
