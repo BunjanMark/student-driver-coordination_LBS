@@ -5,18 +5,27 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { Button, Icon } from "react-native-elements";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
 import io from "socket.io-client";
+import { Modal } from "react-native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const socket = io("wss://websocket-server-hopspot.glitch.me/");
 
+const LayerOption = ({ onPress }) => (
+  <TouchableOpacity style={styles.layerOption} onPress={onPress}>
+    <MaterialCommunityIcons name="layers" color="white" size={24} />
+  </TouchableOpacity>
+);
 const GoogleMapView = () => {
   const [location, setLocation] = useState(null);
   const [locationUpdates, setLocationUpdates] = useState([]);
   const [userAddress, setUserAddress] = useState("");
+  const [layerMenuVisible, setLayerMenuVisible] = useState(false);
 
   const shareLocation = async () => {
     try {
@@ -85,6 +94,44 @@ const GoogleMapView = () => {
       {/* Add more legend items as needed */}
     </View>
   );
+  const LayerOption = ({ onPress }) => (
+    <TouchableOpacity style={styles.layerOption} onPress={onPress}>
+      <MaterialCommunityIcons name="layers" color="white" size={24} />
+    </TouchableOpacity>
+  );
+
+  const handleLayerPress = () => {
+    setLayerMenuVisible(!layerMenuVisible);
+  };
+  const LayerMenu = ({ visible, onRequestClose }) => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+        onRequestClose={onRequestClose}
+      >
+        <View style={styles.layerMenuContainer}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {/* Terrain Option 1 */}
+            <TouchableOpacity style={styles.layerMenuItem}>
+              {/* Add option icon or content */}
+            </TouchableOpacity>
+
+            {/* Terrain Option 2 */}
+            <TouchableOpacity style={styles.layerMenuItem}>
+              {/* Add option icon or content */}
+            </TouchableOpacity>
+
+            {/* Terrain Option 3 */}
+            <TouchableOpacity style={styles.layerMenuItem}>
+              {/* Add option icon or content */}
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      </Modal>
+    );
+  };
 
   return (
     <SafeAreaView>
@@ -153,6 +200,11 @@ const GoogleMapView = () => {
           />
         ))}
       </MapView>
+      {/* Layer Option */}
+      <LayerOption onPress={handleLayerPress} />
+
+      {/* Layer Menu */}
+      <LayerMenu visible={layerMenuVisible} onRequestClose={handleLayerPress} />
     </SafeAreaView>
   );
 };
@@ -211,6 +263,29 @@ const styles = StyleSheet.create({
   },
   legendLabel: {
     fontWeight: "bold",
+  },
+  layerOption: {
+    position: "absolute",
+    bottom: 90,
+    right: 20,
+    backgroundColor: "green",
+    padding: 10,
+    borderRadius: 20,
+  },
+  layerMenuContainer: {
+    position: "absolute",
+    bottom: 93,
+    left: 215,
+    backgroundColor: "white",
+    elevation: 5,
+    borderRadius: 10,
+    padding: 10,
+  },
+  layerMenuItem: {
+    padding: 10,
+    marginRight: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
 });
 
