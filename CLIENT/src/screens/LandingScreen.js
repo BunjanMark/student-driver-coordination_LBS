@@ -2,7 +2,10 @@ import React from "react";
 import { SafeAreaView, ImageBackground, StyleSheet, Image } from "react-native";
 import { Text, Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { widthPercentageToDP, heightPercentageToDP } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP,
+  heightPercentageToDP,
+} from "react-native-responsive-screen";
 
 const LandingScreen = () => {
   const navigator = useNavigation();
@@ -43,7 +46,11 @@ const LandingScreen = () => {
             onPress={() => {
               navigator.navigate("HomeScreen");
             }}
-            style={{ backgroundColor: "black", width: widthPercentageToDP("70%"), height: heightPercentageToDP("6%") }}
+            style={{
+              backgroundColor: "black",
+              width: widthPercentageToDP("70%"),
+              height: heightPercentageToDP("6%"),
+            }}
             contentStyle={{
               flexDirection: "row-reverse",
               justifyContent: "center",

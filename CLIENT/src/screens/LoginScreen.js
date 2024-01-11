@@ -7,12 +7,21 @@ import {
   Image,
   Platform,
 } from "react-native";
-import { Button, Provider as PaperProvider, TextInput, Text } from "react-native-paper";
+import {
+  Button,
+  Provider as PaperProvider,
+  TextInput,
+  Text,
+} from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { widthPercentageToDP, heightPercentageToDP } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP,
+  heightPercentageToDP,
+} from "react-native-responsive-screen";
 import { useState } from "react";
 import Toast from "react-native-root-toast";
-
+import fetchServices from "../services/fetchServices";
+fetchServices;
 const LoginScreen = () => {
   const navigator = useNavigation();
 
@@ -36,7 +45,8 @@ const LoginScreen = () => {
         return false;
       }
 
-      const url = "http://192.168.254.110:8000/api/login";
+      const url =
+        "https://389b-2001-4455-62c-c800-549d-68f4-c3fc-9dce.ngrok-free.app/api/login";
       const data = {
         email,
         password,
@@ -77,7 +87,9 @@ const LoginScreen = () => {
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : null}
             style={styles.formContainer}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : heightPercentageToDP("15%")}
+            keyboardVerticalOffset={
+              Platform.OS === "ios" ? 0 : heightPercentageToDP("15%")
+            }
           >
             <Image
               source={require("../images/logo.png")}
@@ -87,7 +99,11 @@ const LoginScreen = () => {
 
             <Text
               variant="headlineLarge"
-              style={{ marginTop: 5, fontWeight: "bold", fontSize: widthPercentageToDP("8%") }}
+              style={{
+                marginTop: 5,
+                fontWeight: "bold",
+                fontSize: widthPercentageToDP("8%"),
+              }}
             >
               Login
             </Text>
