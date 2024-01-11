@@ -16,15 +16,12 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 const socket = io("wss://websocket-server-hopspot.glitch.me/");
 
-const LayerOption = ({ onPress }) => (
-  <TouchableOpacity style={styles.layerOption} onPress={onPress}>
-    <MaterialCommunityIcons name="layers" color="white" size={24} />
-  </TouchableOpacity>
-);
 const GoogleMapView = () => {
   const [location, setLocation] = useState(null);
   const [locationUpdates, setLocationUpdates] = useState([]);
   const [userAddress, setUserAddress] = useState("");
+  const [selectedLayer, setSelectedLayer] = useState("Terrain");
+
   const [layerMenuVisible, setLayerMenuVisible] = useState(false);
 
   const shareLocation = async () => {
@@ -80,100 +77,55 @@ const GoogleMapView = () => {
     };
   }, []);
 
-  const Legend = () => (
-    <View style={styles.legendContainer}>
-      <Text style={styles.legendText}>Legend:</Text>
-      <View style={styles.legendItem}>
-        <View style={[styles.legendColor, { backgroundColor: "blue" }]} />
-        <Text style={styles.legendLabel}>Vehicle A</Text>
-      </View>
-      <View style={styles.legendItem}>
-        <View style={[styles.legendColor, { backgroundColor: "red" }]} />
-        <Text style={styles.legendLabel}>Vehicle B</Text>
-      </View>
-      {/* Add more legend items as needed */}
-    </View>
-  );
-  const LayerOption = ({ onPress }) => (
-    <TouchableOpacity style={styles.layerOption} onPress={onPress}>
-      <MaterialCommunityIcons name="layers" color="white" size={24} />
-    </TouchableOpacity>
-  );
-
   const handleLayerPress = () => {
     setLayerMenuVisible(!layerMenuVisible);
   };
-  const LayerMenu = ({ visible, onRequestClose }) => {
-    return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onRequestClose}
-      >
-        <View style={styles.layerMenuContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {/* Terrain Option 1 */}
-            <TouchableOpacity style={styles.layerMenuItem}>
-              {/* Add option icon or content */}
-            </TouchableOpacity>
 
-            {/* Terrain Option 2 */}
-            <TouchableOpacity style={styles.layerMenuItem}>
-              {/* Add option icon or content */}
-            </TouchableOpacity>
-
-            {/* Terrain Option 3 */}
-            <TouchableOpacity style={styles.layerMenuItem}>
-              {/* Add option icon or content */}
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
-      </Modal>
-    );
-  };
+  const LayerMenu = ({ visible, onRequestClose }) => (
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onRequestClose}
+    >
+      <View style={styles.layerMenuContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <TouchableOpacity
+            style={styles.layerMenuItem}
+            onPress={() => {
+              setSelectedLayer("Legend 1");
+              onRequestClose();
+            }}
+          >
+            <Text>Legend 1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.layerMenuItem}
+            onPress={() => {
+              setSelectedLayer("Legend 2");
+              onRequestClose();
+            }}
+          >
+            <Text>Legend 2</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.layerMenuItem}
+            onPress={() => {
+              setSelectedLayer("Legend 3");
+              onRequestClose();
+            }}
+          >
+            <Text>Legend 3</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+    </Modal>
+  );
 
   return (
     <SafeAreaView>
-      {/* <Legend /> */}
-      <TouchableOpacity
-        style={
-          (styles.button,
-          {
-            backgroundColor: "transparent",
-            top: "0%",
-            right: "32%",
-            zIndex: 1,
-            position: "absolute",
 
-            height: 100,
-          })
-        }
-        onPress={shareLocation}
-        activeOpacity={0.7}
-      >
-        <Icon
-          name="map-marker"
-          type="font-awesome"
-          color="black"
-          style={styles.icon}
-        />
-        <Text style={styles.buttonText}>Share Location</Text>
-      </TouchableOpacity>
-      {/* <TouchableOpacity
-        onPress={shareLocation}
-        style={{
-          backgroundColor: "#575757",
-          bottom: 400,
-          zIndex: 1,
-          position: "absolute",
-
-          height: 100,
-        }}
-      >
-        <Text>Press me1</Text>
-      </TouchableOpacity> */}
-
+  
       <MapView
         style={styles.map}
         provider="google"
@@ -200,11 +152,31 @@ const GoogleMapView = () => {
           />
         ))}
       </MapView>
-      {/* Layer Option */}
-      <LayerOption onPress={handleLayerPress} />
 
-      {/* Layer Menu */}
-      <LayerMenu visible={layerMenuVisible} onRequestClose={handleLayerPress} />
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.layerOption} onPress={handleLayerPress}>
+          <MaterialCommunityIcons name="layers" color="white" size={30} />
+          <LayerMenu
+            visible={layerMenuVisible}
+            onRequestClose={handleLayerPress}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={shareLocation}
+          activeOpacity={0.1}
+        >
+          <Icon name="map-marker" type="font-awesome" color="white" size={30} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.layerMenuContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        ></ScrollView>
+      </View>
+
     </SafeAreaView>
   );
 };
@@ -213,69 +185,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  button: {
-    backgroundColor: "#575757",
-    position: "absolute",
-    bottom: 400,
-    zIndex: 1,
-    height: 100,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
-  icon: {
-    marginRight: 10,
-  },
-  buttonText: {
-    color: "black",
-    fontSize: 20,
-  },
   map: {
     width: "100%",
-    height: "100%",
+    height: "98%",
   },
-  buttonText: {
-    color: "black",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  legendContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 10,
-  },
-  legendText: {
-    marginRight: 5,
-    fontWeight: "bold",
-  },
-  legendItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 10,
-  },
-  legendColor: {
-    width: 20,
-    height: 20,
-    marginRight: 5,
-    borderRadius: 10,
-  },
-  legendLabel: {
-    fontWeight: "bold",
+  button: {
+    width: 50,
+    backgroundColor: "green",
+    borderRadius: 20,
+    padding: 10,
   },
   layerOption: {
-    position: "absolute",
-    bottom: 90,
-    right: 20,
     backgroundColor: "green",
     padding: 10,
     borderRadius: 20,
+    marginBottom: 10,
   },
   layerMenuContainer: {
     position: "absolute",
-    bottom: 93,
-    left: 215,
+    bottom: 240,
+    left: 15,
     backgroundColor: "white",
     elevation: 5,
     borderRadius: 10,
@@ -287,6 +216,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
+  buttonContainer: {
+    position: "absolute",
+    right: 15,
+    bottom: 90,
+    flexDirection: "column",
+  },
 });
+
 
 export default GoogleMapView;

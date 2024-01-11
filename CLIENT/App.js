@@ -11,6 +11,9 @@ import LoginScreen from "./src/screens/LoginScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import Settings from "./src/screens/Settings";
 
+import About from "./src/screens/About";
+
+
 const Stack = createNativeStackNavigator();
 
 const App = () => {
@@ -49,6 +52,13 @@ const App = () => {
             component={Settings}
             options={{ headerShown: false }}
           />
+
+          <Stack.Screen
+            name="About"
+            component={About}
+            options={{ headerShown: false }}
+          />
+
         </Stack.Navigator>
       </NavigationContainer>
     </DarkModeProvider>

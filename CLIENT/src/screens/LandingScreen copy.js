@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const LandingScreen = () => {
   const navigator = useNavigation();
-  
+
   return (
     <ImageBackground
       source={require("../images/landing.png")}

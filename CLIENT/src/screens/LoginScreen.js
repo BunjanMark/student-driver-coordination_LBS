@@ -21,6 +21,9 @@ import {
 import { useState } from "react";
 import Toast from "react-native-root-toast";
 import fetchServices from "../services/fetchServices";
+
+// fetchServices;
+
 const LoginScreen = () => {
   const navigator = useNavigation();
 
@@ -44,7 +47,9 @@ const LoginScreen = () => {
         return false;
       }
 
-      const url = "https://d607-180-191-84-209.ngrok-free.app/api/login";
+      const url =
+        "https://389b-2001-4455-62c-c800-549d-68f4-c3fc-9dce.ngrok-free.app/api/login";
+
       const data = {
         email,
         password,

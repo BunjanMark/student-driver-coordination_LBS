@@ -1,126 +1,124 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
+  SafeAreaView,
   Text,
-  TextInput,
-  TouchableOpacity,
   FlatList,
-  Alert,
   StyleSheet,
+  TextInput,
+  Image,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SafeAreaView } from "react-native-safe-area-context";
+import * as SecureStore from "expo-secure-store";
 import SidebarMenu from "../components/SidebarMenu";
+import io from "socket.io-client";
+import { useDarkMode } from "../components/context/DarkModeContext";
 
-const TransportationHistoryScreen = () => {
-  const [inputKey, setInputKey] = useState("");
-  const [inputValue, setInputValue] = useState("");
-  const [searchKey, setSearchKey] = useState("");
-  const [foundValues, setFoundValues] = useState([]);
-  const [savedData, setSavedData] = useState([]);
+const socket = io("wss://websocket-server-hopspot.glitch.me/");
+
+const History = () => {
+  const { darkMode } = useDarkMode();
+  const [locationUpdates, setLocationUpdates] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    loadSavedData();
+    loadLocationHistory();
+
+    // Listen for location updates from the server
+    socket.on("locationUpdate", (data) => {
+      console.log("Location update received:", data);
+      // Handle the location update and save it to history
+      handleLocationUpdate(data);
+    });
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      socket.off("locationUpdate");
+    };
   }, []);
 
-  const loadSavedData = async () => {
+  const handleLocationUpdate = async (locationUpdate) => {
     try {
-      const storedData = await AsyncStorage.getItem("transportationHistory");
+      // Save the location update to history in SecureStore
+      await SecureStore.setItemAsync(
+        "locationHistory",
+        JSON.stringify([...locationUpdates, locationUpdate])
+      );
 
-      if (storedData) {
-        setSavedData(storedData.split("\n"));
+      // Update state to reflect the new location update
+      setLocationUpdates((prevUpdates) => [...prevUpdates, locationUpdate]);
+    } catch (error) {
+      console.error("Error saving location update to history:", error);
+    }
+  };
+
+  const loadLocationHistory = async () => {
+    try {
+      // Load location history from SecureStore
+      const storedHistory = await SecureStore.getItemAsync("locationHistory");
+      if (storedHistory) {
+        const parsedHistory = JSON.parse(storedHistory);
+        setLocationUpdates(parsedHistory);
       }
     } catch (error) {
-      console.error("Error loading saved data:", error);
+      console.error("Error loading location history:", error);
     }
   };
 
-  const saveToTransportationHistory = async () => {
-    try {
-      const newDataEntry = `${inputKey}: ${inputValue}`;
-
-      const existingData = await AsyncStorage.getItem("transportationHistory");
-
-      const updatedData = existingData
-        ? `${existingData}\n${newDataEntry}`
-        : newDataEntry;
-
-      await AsyncStorage.setItem("transportationHistory", updatedData);
-
-      setInputKey("");
-      setInputValue("");
-
-      setSavedData(updatedData.split("\n"));
-    } catch (error) {
-      console.error("Error saving to transportation history:", error);
-    }
-  };
-
-  const searchTransportationHistory = () => {
-    const values = [];
-
-    for (const line of savedData) {
-      const [key, value] = line.split(": ");
-      if (key === searchKey) {
-        values.push(value);
-      }
-    }
-
-    setFoundValues(values);
-
-    if (values.length === 0) {
-      Alert.alert("Not Found", `No data found for key: ${searchKey}`);
-    }
-  };
+  const filteredLocationUpdates = locationUpdates.filter((item) => {
+    const deviceNumber = item.deviceNumber.toString();
+    const locationString = JSON.stringify(item.location);
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      deviceNumber.includes(searchLower) || locationString.includes(searchLower)
+    );
+  });
 
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      style={[
+        styles.container,
+        {
+          backgroundColor: darkMode
+            ? "rgba(0, 0, 0, 0.7)"
+            : "rgba(255, 255, 255, 0.7)",
+        },
+      ]}
+    >
       <SidebarMenu />
-      <View>
-        <Text style={styles.maintext}>SAVE INFOS</Text>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Enter a key"
-          value={inputKey}
-          onChangeText={(text) => setInputKey(text)}
+      <View style={{ flex: 1 }}>
+        <Image
+          source={require("../images/bg.png")}
+          style={styles.backgroundImage}
         />
-
+        <Text style={[styles.maintext, darkMode && styles.darkMaintext]}>
+          LOCATION HISTORY
+        </Text>
         <TextInput
-          style={styles.textInput}
-          placeholder="Enter a value"
-          value={inputValue}
-          onChangeText={(text) => setInputValue(text)}
+          style={[styles.searchInput, darkMode && styles.darkSearchInput]}
+          placeholder="Search..."
+          placeholderTextColor={darkMode ? "black" : "white"}
+          value={searchQuery}
+          onChangeText={(text) => setSearchQuery(text)}
         />
-
-        <TouchableOpacity
-          onPress={saveToTransportationHistory}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Save</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.maintext}>SEARCH HISTORY</Text>
-
-        <TextInput
-          style={styles.textInput}
-          placeholder="Search the key from saved infos"
-          value={searchKey}
-          onChangeText={(text) => setSearchKey(text)}
-        />
-
-        <TouchableOpacity
-          onPress={searchTransportationHistory}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText}>Search</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.maintext}>RESULTS</Text>
-
         <FlatList
-          data={foundValues}
+          data={filteredLocationUpdates}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => <Text>Found value: {item}</Text>}
+          renderItem={({ item }) => {
+            const locationString = JSON.stringify(item.location);
+            const address = item.address || "Address not available";
+            return (
+              <View
+                style={[styles.historyItem, darkMode && styles.darkHistoryItem]}
+              >
+                <Text style={{ color: darkMode ? "white" : "black" }}>
+                  Device {item.deviceNumber}: {locationString}
+                </Text>
+                <Text style={{ color: darkMode ? "white" : "black" }}>
+                  Address: {address}
+                </Text>
+              </View>
+            );
+          }}
         />
       </View>
     </SafeAreaView>
@@ -130,36 +128,44 @@ const TransportationHistoryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
   },
   maintext: {
-    marginTop: 10,
+    marginTop: 20,
     margin: 10,
     fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
-  },
-  textInput: {
-    height: 55,
-    borderColor: "gray",
-    borderWidth: 0.5,
-    padding: 10,
-    margin: 4,
-    borderRadius: 20,
-  },
-  button: {
-    backgroundColor: "#22092C",
-    padding: 10,
-    margin: 10,
-    borderRadius: 20,
-    alignItems: "center",
-  },
-  buttonText: {
     color: "white",
-    fontWeight: "bold",
+  },
+  darkMaintext: {
+    color: "black",
+  },
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    resizeMode: "cover",
+    zIndex: 0,
+  },
+  searchInput: {
+    height: 40,
+    borderColor: "white",
+    borderWidth: 3,
+    margin: 10,
+    paddingLeft: 10,
+    color: "white",
+  },
+  darkSearchInput: {
+    color: "black",
+    borderColor: "black",
+  },
+  historyItem: {
+    margin: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    padding: 10,
+    borderRadius: 8,
+  },
+  darkHistoryItem: {
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
   },
 });
 
-export default TransportationHistoryScreen;
+export default History;

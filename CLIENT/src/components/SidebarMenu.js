@@ -41,12 +41,14 @@ const FixedHeader = () => {
     }
   }, [isFocused]);
 
+
   return (
     <TouchableWithoutFeedback onPress={closeSidebar}>
       <View style={[styles.header, darkMode && styles.darkHeader]}>
         <TouchableOpacity style={styles.sidebarButton} onPress={toggleSidebar}>
           <Icon name="menu" size={25} color={darkMode ? "white" : "black"} />
         </TouchableOpacity>
+
 
         <View style={styles.searchBar}>
           <SearchBar
@@ -82,7 +84,15 @@ const FixedHeader = () => {
                 Home
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.sidebarItem}>
+
+
+            <TouchableOpacity
+              style={styles.sidebarItem}
+              onPress={() => {
+                navigator.navigate("About");
+              }}
+            >
+
               <Icon
                 name="information-circle"
                 size={20}
