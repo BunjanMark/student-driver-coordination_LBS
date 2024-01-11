@@ -21,6 +21,7 @@ const GoogleMapView = () => {
   const [locationUpdates, setLocationUpdates] = useState([]);
   const [userAddress, setUserAddress] = useState("");
   const [selectedLayer, setSelectedLayer] = useState("Terrain");
+
   const [layerMenuVisible, setLayerMenuVisible] = useState(false);
 
   const shareLocation = async () => {
@@ -123,6 +124,8 @@ const GoogleMapView = () => {
 
   return (
     <SafeAreaView>
+
+  
       <MapView
         style={styles.map}
         provider="google"
@@ -150,6 +153,7 @@ const GoogleMapView = () => {
         ))}
       </MapView>
 
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.layerOption} onPress={handleLayerPress}>
           <MaterialCommunityIcons name="layers" color="white" size={30} />
@@ -172,6 +176,7 @@ const GoogleMapView = () => {
           showsHorizontalScrollIndicator={false}
         ></ScrollView>
       </View>
+
     </SafeAreaView>
   );
 };
@@ -218,5 +223,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
 });
+
 
 export default GoogleMapView;
