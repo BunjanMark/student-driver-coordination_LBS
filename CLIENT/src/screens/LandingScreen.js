@@ -51,13 +51,6 @@ const LandingScreen = () => {
               width: widthPercentageToDP("70%"),
               height: heightPercentageToDP("6%"),
             }}
-
-            style={{
-              backgroundColor: "black",
-              width: widthPercentageToDP("70%"),
-              height: heightPercentageToDP("6%"),
-            }}
-
             contentStyle={{
               flexDirection: "row-reverse",
               justifyContent: "center",
