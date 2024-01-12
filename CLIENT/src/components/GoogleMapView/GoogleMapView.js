@@ -13,6 +13,7 @@ import MapView, { Marker } from "react-native-maps";
 import io from "socket.io-client";
 import { Modal } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { PROVIDER_GOOGLE } from "react-native-maps";
 
 const socket = io("wss://websocket-server-hopspot.glitch.me/");
 
@@ -21,6 +22,7 @@ const GoogleMapView = () => {
   const [locationUpdates, setLocationUpdates] = useState([]);
   const [userAddress, setUserAddress] = useState("");
   const [selectedLayer, setSelectedLayer] = useState("Terrain");
+
   const [layerMenuVisible, setLayerMenuVisible] = useState(false);
 
   const shareLocation = async () => {
@@ -125,7 +127,7 @@ const GoogleMapView = () => {
     <SafeAreaView>
       <MapView
         style={styles.map}
-        provider="google"
+        provider={PROVIDER_GOOGLE}
         showsUserLocation={true}
         showsMyLocationButton={true}
         showsCompass={true}
