@@ -125,6 +125,8 @@ const GoogleMapView = () => {
 
   return (
     <SafeAreaView>
+
+  
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
@@ -152,6 +154,7 @@ const GoogleMapView = () => {
         ))}
       </MapView>
 
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.layerOption} onPress={handleLayerPress}>
           <MaterialCommunityIcons name="layers" color="white" size={30} />
@@ -174,6 +177,7 @@ const GoogleMapView = () => {
           showsHorizontalScrollIndicator={false}
         ></ScrollView>
       </View>
+
     </SafeAreaView>
   );
 };
@@ -220,5 +224,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
 });
+
 
 export default GoogleMapView;
