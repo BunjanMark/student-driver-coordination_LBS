@@ -23,7 +23,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.shoxc.authentication",
+      "package": "android.package.maps",
 
       "versionCode": 1.0,
       "permissions": ["ACCESS_COARSE_LOCATION"],

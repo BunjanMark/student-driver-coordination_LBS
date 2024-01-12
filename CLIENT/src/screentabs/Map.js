@@ -6,6 +6,7 @@ import SidebarMenu from "../components/SidebarMenu";
 import MapView from "react-native-maps";
 import GoogleMapView from "../components/GoogleMapView/GoogleMapView";
 import { useDarkMode } from "../components/context/DarkModeContext";
+import GooglePlacesInput from "../components/GoogleMapView/GooglePlacesInput";
 
 const Map = () => {
   const { darkMode } = useDarkMode();
@@ -14,9 +15,16 @@ const Map = () => {
     <SafeAreaView
       style={{ flex: 1, backgroundColor: darkMode ? "#575757" : "white" }}
     >
+      <View>
+        {/* <Text>
+          <GooglePlacesInput />
+        </Text> */}
+      </View>
       <SidebarMenu />
       <GoogleMapView />
       {/* You can customize the background color or other styles based on darkMode */}
+
+      <GooglePlacesInput />
       <View
         style={{
           flex: 1,

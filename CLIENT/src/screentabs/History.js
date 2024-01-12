@@ -84,7 +84,6 @@ const History = () => {
         },
       ]}
     >
-      <SidebarMenu />
       <View style={{ flex: 1 }}>
         <Image
           source={require("../images/bg.png")}
