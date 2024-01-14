@@ -51,7 +51,7 @@ const RegisterScreen = () => {
       }
 
       const url =
-        "https://389b-2001-4455-62c-c800-549d-68f4-c3fc-9dce.ngrok-free.app/api/register";
+        "https://41a4-2001-4455-62c-c800-7c4c-e35c-5c46-cdbd.ngrok-free.app/api/register";
 
       const data = {
         name,

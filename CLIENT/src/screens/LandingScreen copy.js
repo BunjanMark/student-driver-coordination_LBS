@@ -22,7 +22,7 @@ const LandingScreen = () => {
             mode="contained-tonal"
             icon={"login"}
             onPress={() => {
-              navigator.navigate("LoginScreen");
+              navigator.navigate("HomeScreen");
             }}
           >
             Log in

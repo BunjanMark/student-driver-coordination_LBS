@@ -11,6 +11,7 @@ export default class App extends React.Component {
     return (
       <SafeAreaView>
         <SidebarMenu />
+
         <SafeAreaView>
           <GoogleMapView />
         </SafeAreaView>
