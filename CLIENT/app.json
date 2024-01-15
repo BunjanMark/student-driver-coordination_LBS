@@ -29,7 +29,7 @@
       "permissions": ["ACCESS_COARSE_LOCATION"],
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyBHm2dKKgwCE_9ub4Pd9PRcb17aNv2kVMI"
+          "apikey": "AIzaSyBHm2dKKgwCE_9ub4Pd9PRcb17aNv2kVMI"
         }
       }
     },

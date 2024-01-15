@@ -14,6 +14,9 @@ import io from "socket.io-client";
 import { Modal } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { PROVIDER_GOOGLE } from "react-native-maps";
+import GooglePlacesInput from "./GooglePlacesInput";
+// import { Platform } from "react-native";
+// import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
 
 const socket = io("wss://websocket-server-hopspot.glitch.me/");
 
@@ -42,8 +45,43 @@ const GoogleMapView = () => {
         // Extract the formatted address from the response
         const formattedAddress = data.results[0].formatted_address;
         console.log("Formatted Address:", formattedAddress);
+        // const granted = await request(
+        //   Platform.select({
+        //     android: PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION,
+        //     ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        //   }),
+        //   {
+        //     title: "DemoApp",
+        //     message: "DemoApp would like access to your location ",
+        //   }
+        // );
 
+        // return granted === RESULTS.GRANTED;
         // Set the location and address in state
+        if (Platform.OS === "ios") {
+          const { status } = await Location.setAccuracyAsync(
+            Location.Accuracy.Highest
+          );
+          if (status !== "granted") {
+            Alert.alert(
+              "Insufficient permissions!",
+              "Sorry, we need location permissions to make this work!",
+              [{ text: "Okay" }]
+            );
+            return;
+          }
+        }
+
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          setErrorMsg("Permission to access location was denied");
+          return;
+        }
+        // let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        // if(status === 'granted') {
+        //     this.getLocation();
+        //  }
+
         setLocation(location);
         setUserAddress(formattedAddress);
 
@@ -125,13 +163,11 @@ const GoogleMapView = () => {
 
   return (
     <SafeAreaView>
-
-  
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        showsUserLocation={true}
-        showsMyLocationButton={true}
+        // showsUserLocation={true}
+        // showsMyLocationButton={true}
         showsCompass={true}
         showsTraffic={true}
         tintColor="green"
@@ -153,7 +189,6 @@ const GoogleMapView = () => {
           />
         ))}
       </MapView>
-
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.layerOption} onPress={handleLayerPress}>
@@ -177,7 +212,6 @@ const GoogleMapView = () => {
           showsHorizontalScrollIndicator={false}
         ></ScrollView>
       </View>
-
     </SafeAreaView>
   );
 };
@@ -224,6 +258,5 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
 });
-
 
 export default GoogleMapView;
