@@ -178,6 +178,18 @@ const GooglePlacesInput = () => {
             return;
           }
         }
+        // if (Platform.OS !== "web") {
+        //   const { status } = await Location.requestForegroundPermissionsAsync();
+
+        //   if (status !== "granted") {
+        //     Alert.alert(
+        //       "Insufficient permissions!",
+        //       "Sorry, we need location permissions to make this work!",
+        //       [{ text: "Okay" }]
+        //     );
+        //     return;
+        //   }
+        // }
 
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
@@ -207,6 +219,7 @@ const GooglePlacesInput = () => {
       console.error("Error sharing location:", error);
     }
   };
+
   const moveTo = async (position) => {
     const camera = await mapRef.current?.getCamera();
     if (camera) {
@@ -248,7 +261,18 @@ const GooglePlacesInput = () => {
       socket.off("locationUpdate");
     };
   }, []);
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
 
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
   const handleLayerPress = () => {
     setLayerMenuVisible(!layerMenuVisible);
   };
@@ -305,8 +329,8 @@ const GooglePlacesInput = () => {
         ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        // showsUserLocation={true}
-        // showsMyLocationButton={true}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
         showsCompass={true}
         // showsTraffic={true}
         tintColor="green"
@@ -480,6 +504,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     textAlign: "center",
+    color: "white",
   },
 });
 //   const [origin, setOrigin] = useState("");

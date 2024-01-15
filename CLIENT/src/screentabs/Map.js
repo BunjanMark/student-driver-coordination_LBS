@@ -86,7 +86,6 @@ const Map = () => {
   return (
     <SafeAreaView
       style={{
-        flex: 1,
         backgroundColor: darkMode ? "#575757" : "white",
       }}
     >
