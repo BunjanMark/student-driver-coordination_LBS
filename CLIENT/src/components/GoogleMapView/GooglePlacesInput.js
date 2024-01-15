@@ -29,14 +29,6 @@ import { PROVIDER_GOOGLE } from "react-native-maps";
 // import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
 const socket = io("wss://websocket-server-hopspot.glitch.me/");
 
-const moveTo = async (position) => {
-  const camera = await mapRef.current?.getCamera();
-  if (camera) {
-    camera.center = position;
-    mapRef.current?.animateCamera(camera, { duration: 1000 });
-  }
-};
-
 const edgePaddingValue = 70;
 
 const edgePadding = {
@@ -45,30 +37,19 @@ const edgePadding = {
   bottom: edgePaddingValue,
   left: edgePaddingValue,
 };
-const traceRouteOnReady = (args) => {
-  if (args) {
-    // args.distance
-    // args.duration
-    setDistance(args.distance);
-    setDuration(args.duration);
-  }
-};
-const traceRoute = () => {
-  if (origin && destination) {
-    setShowDirections(true);
-    mapRef.current?.fitToCoordinates([origin, destination], { edgePadding });
-  }
-};
+
 const InputAutocomplete = ({ label, placeholder, onPlaceSelected }) => {
   return (
     <View>
       <Text>{label}</Text>
       <GooglePlacesAutocomplete
         styles={{ textInput: styles.input }}
-        placeholder="Search"
+        fetchDetails={true}
+        placeholder={placeholder}
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
           console.log(data, details);
+          onPlaceSelected(details);
         }}
         query={{
           key: GOOGLE_API_KEY,
@@ -80,15 +61,7 @@ const InputAutocomplete = ({ label, placeholder, onPlaceSelected }) => {
     </View>
   );
 };
-const onPlaceSelected = (details, flag) => {
-  const set = flag === "origin" ? setOrigin : setDestination;
-  const position = {
-    latitude: details?.geometry.location.lat || 0,
-    longitude: details?.geometry.location.lng || 0,
-  };
-  set(position);
-  moveTo(position);
-};
+
 const handleLayerPress = () => {
   setLayerMenuVisible(!layerMenuVisible);
 };
@@ -140,7 +113,28 @@ const GooglePlacesInput = () => {
   const [selectedLayer, setSelectedLayer] = useState("Terrain");
 
   const [layerMenuVisible, setLayerMenuVisible] = useState(false);
-
+  const { darkMode } = useDarkMode();
+  const insets = useSafeAreaInsets();
+  const [origin, setOrigin] = useState(null); // Use null instead of an empty string
+  const [destination, setDestination] = useState(null); // Use null instead of an empty string
+  const [showDirections, setShowDirections] = useState(false);
+  const [distance, setDistance] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const mapRef = useRef(null);
+  const traceRouteOnReady = (args) => {
+    if (args) {
+      // args.distance
+      // args.duration
+      setDistance(args.distance);
+      setDuration(args.duration);
+    }
+  };
+  const traceRoute = () => {
+    if (origin && destination) {
+      setShowDirections(true);
+      mapRef.current?.fitToCoordinates([origin, destination], { edgePadding });
+    }
+  };
   const shareLocation = async () => {
     try {
       // Get the current location
@@ -213,6 +207,32 @@ const GooglePlacesInput = () => {
       console.error("Error sharing location:", error);
     }
   };
+  const moveTo = async (position) => {
+    const camera = await mapRef.current?.getCamera();
+    if (camera) {
+      camera.center = position;
+      mapRef.current?.animateCamera(camera, { duration: 1000 });
+    }
+  };
+
+  const onPlaceSelected = (details, flag) => {
+    const set = flag === "origin" ? setOrigin : setDestination;
+
+    // Check if details object exists and has the expected structure
+    if (details && details.geometry && details.geometry.location) {
+      const { lat, lng } = details.geometry.location;
+
+      const position = {
+        latitude: lat,
+        longitude: lng,
+      };
+
+      set(position);
+      moveTo(position);
+    } else {
+      console.warn("Invalid details object:", details);
+    }
+  };
 
   useEffect(() => {
     // Listen for location updates from the server
@@ -273,14 +293,7 @@ const GooglePlacesInput = () => {
       </View>
     </Modal>
   );
-  const { darkMode } = useDarkMode();
-  const insets = useSafeAreaInsets();
-  const [origin, setOrigin] = useState("");
-  const [destination, setDestination] = useState("");
-  const [showDirections, setShowDirections] = useState(false);
-  const [distance, setDistance] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const mapRef = useRef("");
+
   return (
     <SafeAreaView
       style={{
@@ -289,12 +302,13 @@ const GooglePlacesInput = () => {
     >
       {/* <SidebarMenu /> */}
       <MapView
+        ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         // showsUserLocation={true}
         // showsMyLocationButton={true}
         showsCompass={true}
-        showsTraffic={true}
+        // showsTraffic={true}
         tintColor="green"
         initialRegion={{
           latitude: 8.486097, // Local latitude
@@ -313,6 +327,18 @@ const GooglePlacesInput = () => {
             title={update.address}
           />
         ))}
+        {origin && <Marker coordinate={origin} />}
+        {destination && <Marker coordinate={destination} />}
+        {showDirections && origin && destination && (
+          <MapViewDirections
+            origin={origin}
+            destination={destination}
+            apikey={GOOGLE_API_KEY}
+            strokeColor="green"
+            strokeWidth={4}
+            onReady={traceRouteOnReady}
+          />
+        )}
       </MapView>
       <View
         style={{
@@ -325,9 +351,30 @@ const GooglePlacesInput = () => {
         }}
       >
         <View style={styles.searchContainer}>
-          <InputAutocomplete label="Origin" onPlaceSelected={() => {}} />
-          <InputAutocomplete label="Destination" onPlaceSelected={() => {}} />
+          <InputAutocomplete
+            label="Origin"
+            placeholder={"Enter origin"}
+            onPlaceSelected={(details) => onPlaceSelected(details, "origin")}
+          />
+          <InputAutocomplete
+            label="Destination"
+            placeholder={"Enter destination"}
+            onPlaceSelected={(details) =>
+              onPlaceSelected(details, "destination")
+            }
+          />
+          <TouchableOpacity
+            style={styles.routeButton}
+            onPress={() => setShowDirections(!showDirections)}
+          >
+            <Text style={styles.buttonText}>Trace route</Text>
+          </TouchableOpacity>
+          <View>
+            <Text>Distance: {distance.toFixed(2)} km</Text>
+            <Text>Duration: {Math.ceil(duration)} min </Text>
+          </View>
         </View>
+
         {/* <GooglePlacesInput /> */}
       </View>
       <View style={styles.buttonContainer}>
@@ -424,6 +471,15 @@ const styles = StyleSheet.create({
     right: 15,
     bottom: 90,
     flexDirection: "column",
+  },
+  routeButton: {
+    backgroundColor: "green",
+    paddingVertical: 12,
+    marginTop: 16,
+    borderRadius: 5,
+  },
+  buttonText: {
+    textAlign: "center",
   },
 });
 //   const [origin, setOrigin] = useState("");
