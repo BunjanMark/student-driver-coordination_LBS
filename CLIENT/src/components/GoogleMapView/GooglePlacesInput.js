@@ -1,21 +1,11 @@
 import { View, Text, Button } from "react-native";
-
-import { useNavigation } from "@react-navigation/native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import {SafeAreaView,useSafeAreaInsets,} from "react-native-safe-area-context";
 import React, { useState, useRef, useEffect } from "react";
-
 import { useDarkMode } from "../../components/context/DarkModeContext";
-import {
-  GooglePlacesAutocomplete,
-  GooglePlaceDetail,
-} from "react-native-google-places-autocomplete";
+import {GooglePlacesAutocomplete, GooglePlaceDetail,} from "react-native-google-places-autocomplete";
 import { GOOGLE_API_KEY } from "../../services/GoogleApiKey";
 import { StyleSheet } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
-
 import { TouchableOpacity, ScrollView } from "react-native";
 import { Icon } from "react-native-elements";
 import * as Location from "expo-location";
@@ -24,6 +14,7 @@ import io from "socket.io-client";
 import { Modal } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { PROVIDER_GOOGLE } from "react-native-maps";
+
 
 // import { Platform } from "react-native";
 // import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
@@ -165,6 +156,7 @@ const GooglePlacesInput = () => {
 
         // return granted === RESULTS.GRANTED;
         // Set the location and address in state
+        
         if (Platform.OS === "ios") {
           const { status } = await Location.setAccuracyAsync(
             Location.Accuracy.Highest
@@ -321,6 +313,7 @@ const GooglePlacesInput = () => {
   return (
     <SafeAreaView
       style={{
+      
         backgroundColor: darkMode ? "#575757" : "white",
       }}
     >
@@ -368,7 +361,7 @@ const GooglePlacesInput = () => {
         style={{
           position: "absolute",
           width: "90%",
-          top: Math.max(insets.top, 40),
+          top: Math.max(insets.top, 50),
           zIndex: 10,
           marginLeft: Math.max(insets.left, 38),
           // marginLeft: Constants.statusBarHeight,
@@ -399,6 +392,7 @@ const GooglePlacesInput = () => {
           </View>
         </View>
 
+        
         {/* <GooglePlacesInput /> */}
       </View>
       <View style={styles.buttonContainer}>
@@ -424,7 +418,7 @@ const GooglePlacesInput = () => {
         ></ScrollView>
       </View>
       {/* You can customize the background color or other styles based on darkMode */}
-      {/* <View
+      {/* \\<View
         style={{
           flex: 1,
           justifyContent: "center",
@@ -433,6 +427,8 @@ const GooglePlacesInput = () => {
       >
         <Text style={{ color: darkMode ? "white" : "black" }}></Text>
       </View> */}
+
+      
     </SafeAreaView>
   );
 };
@@ -460,9 +456,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
+    
     width: "100%",
-    height: "98%",
+    height: "103%",
+    
+   
   },
+
   button: {
     width: 50,
     backgroundColor: "green",
@@ -505,6 +505,13 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: "center",
     color: "white",
+  },
+
+  customButton: {
+    backgroundColor: "purple",
+    paddingVertical: 12,
+    marginTop: 16,
+    borderRadius: 5,
   },
 });
 //   const [origin, setOrigin] = useState("");

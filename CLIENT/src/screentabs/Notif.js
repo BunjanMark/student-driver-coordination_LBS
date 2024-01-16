@@ -127,7 +127,8 @@ const History = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    
+    height: 100,
   },
   maintext: {
     marginTop: 20,
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     resizeMode: "cover",
     zIndex: 0,
+    height: 200,
   },
   searchInput: {
     height: 40,
