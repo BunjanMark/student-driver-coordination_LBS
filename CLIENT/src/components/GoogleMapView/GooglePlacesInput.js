@@ -120,16 +120,11 @@ const GooglePlacesInput = () => {
       setDuration(args.duration);
     }
   };
-  const handleButtonPress = () => {
+  const handleButtonPressRoute = () => {
     setIsSearchContainerVisible(!isSearchContainerVisible);
     // Additional logic or state updates can be added here
   };
-  const traceRoute = () => {
-    if (origin && destination) {
-      setShowDirections(true);
-      mapRef.current?.fitToCoordinates([origin, destination], { edgePadding });
-    }
-  };
+
   const shareLocation = async () => {
     try {
       // Get the current location
@@ -284,7 +279,7 @@ const GooglePlacesInput = () => {
           <TouchableOpacity
             style={styles.layerMenuItem}
             onPress={() => {
-              handleButtonPress();
+              handleButtonPressRoute();
             }}
           >
             <Text>Trace route!</Text>
@@ -454,16 +449,6 @@ const GooglePlacesInput = () => {
           showsHorizontalScrollIndicator={false}
         ></ScrollView>
       </View>
-      {/* You can customize the background color or other styles based on darkMode */}
-      {/* <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ color: darkMode ? "white" : "black" }}></Text>
-      </View> */}
     </SafeAreaView>
   );
 };
