@@ -111,10 +111,14 @@ const GooglePlacesInput = () => {
       setDuration(args.duration);
     }
   };
+
+  // For routing
   const handleButtonPressRoute = () => {
     setIsSearchContainerRouteVisible(!isSearchContainerRouteVisible);
     // Additional logic or state updates can be added here
   };
+
+  // For PUV
   const handleButtonPressPuv = () => {
     setIsSearchContainerPuvVisible(!isSearchContainerPuvVisible);
     // Additional logic or state updates can be added here
@@ -283,8 +287,7 @@ const GooglePlacesInput = () => {
           <TouchableOpacity
             style={styles.layerMenuItem}
             onPress={() => {
-              setSelectedLayer("Legend 2");
-              onRequestClose();
+              handleButtonPressPuv();
             }}
           >
             <Text>nearest PUV</Text>
@@ -384,6 +387,44 @@ const GooglePlacesInput = () => {
             <Text>Duration: {Math.ceil(duration)} min </Text>
           </View> */}
           {isSearchContainerRouteVisible && (
+
+            <View>
+              <InputAutocomplete
+                label="Origin"
+                placeholder={"Enter origin"}
+                onPlaceSelected={(details) =>
+                  onPlaceSelected(details, "origin")
+                }
+              />
+              <InputAutocomplete
+                label="Destination"
+                placeholder={"Enter destination"}
+                onPlaceSelected={(details) =>
+                  onPlaceSelected(details, "destination")
+                }
+              />
+              <TouchableOpacity
+                style={styles.routeButton}
+                onPress={() => setShowDirections(!showDirections)}
+              >
+                <Text style={styles.buttonText}>Trace route</Text>
+              </TouchableOpacity>
+              <View>
+                <Text>Distance: {distance.toFixed(2)} km</Text>
+                <Text>Duration: {Math.ceil(duration)} min </Text>
+              </View>
+            </View>
+            // <SearchContainer
+            //   onPlaceSelected={(details, flag) => {
+            //     /* Handle place selection */
+            //   }}
+            //   distance={distance}
+            //   duration={duration}
+            //   showDirections={showDirections}
+            //   setShowDirections={setShowDirections}
+            // />
+          )}
+          {isSearchContainerPuvVisible && (
             <View>
               <InputAutocomplete
                 label="Origin"
