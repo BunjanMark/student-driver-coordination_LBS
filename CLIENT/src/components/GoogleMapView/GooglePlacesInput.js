@@ -472,11 +472,9 @@ const GooglePlacesInput = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={shareLocation}
+          onPress={() => {}}
           activeOpacity={0.1}
-        >
-          <Icon name="map-marker" type="font-awesome" color="white" size={30} />
-        </TouchableOpacity>
+        ></TouchableOpacity>
       </View>
       <View style={styles.layerMenuContainer}>
         <ScrollView
