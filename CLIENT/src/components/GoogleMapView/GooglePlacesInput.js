@@ -80,6 +80,7 @@ const GooglePlacesInput = () => {
   const [isSearchContainerPuvVisible, setIsSearchContainerPuvVisible] =
     useState(false);
   const mapRef = useRef(null);
+  const [active, setActive] = useState(false);
   const traceRouteOnReady = (args) => {
     if (args) {
       // args.distance
@@ -191,7 +192,7 @@ const GooglePlacesInput = () => {
     }
   };
 
-  const shareLocationRoute = async () => {
+  const shareLocationPuv = async () => {
     try {
       // Get the current location
       let location = await Location.getCurrentPositionAsync({});
@@ -200,8 +201,8 @@ const GooglePlacesInput = () => {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       };
-
-      moveTo(current_position);
+      onPlaceSelectedPuv(current_position, "origin");
+      // moveTo(current_position);
       // Get the address from the coordinates using the Geocoding API
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
@@ -262,11 +263,31 @@ const GooglePlacesInput = () => {
 
       set(position);
       moveTo(position);
+      console.log(details.geometry.location);
     } else {
       console.warn("Invalid details object:", details);
     }
   };
+  const onPlaceSelectedPuv = (details, flag) => {
+    const set = flag === "origin" ? setOrigin : setDestination;
 
+    // Check if details object exists and has the expected structure
+    // if (details && details.geometry && details.geometry.location) {
+    //   const { lat, lng } = details.geometry.location;
+
+    //   const position = {
+    //     latitude: lat,
+    //     longitude: lng,
+    //   };
+
+    //   set(position);
+    //   moveTo(position);
+    // } else {
+    //   console.warn("Invalid details object:", details);
+    // }
+    moveTo(details);
+    set(details);
+  };
   useEffect(() => {
     // Listen for location updates from the server
     socket.on("locationUpdate", (data) => {
@@ -440,7 +461,7 @@ const GooglePlacesInput = () => {
                 />
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={shareLocationRoute}
+                  onPress={shareLocationPuv}
                   activeOpacity={0.1}
                 >
                   <Icon
