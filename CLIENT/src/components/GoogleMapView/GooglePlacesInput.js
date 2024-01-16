@@ -73,7 +73,8 @@ const GooglePlacesInput = () => {
   const [showDirections, setShowDirections] = useState(false);
   const [distance, setDistance] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [searchContainerVisible, setSearchContainerVisible] = useState(false);
+  const [isSearchContainerVisible, setIsSearchContainerVisible] =
+    useState(false);
   const [isSearchContainerRouteVisible, setIsSearchContainerRouteVisible] =
     useState(false);
   const [isSearchContainerPuvVisible, setIsSearchContainerPuvVisible] =
@@ -90,12 +91,14 @@ const GooglePlacesInput = () => {
 
   // For routing
   const handleButtonPressRoute = () => {
-    setIsSearchContainerRouteVisible(!isSearchContainerRouteVisible);
+    setIsSearchContainerVisible(!isSearchContainerVisible);
+    setIsSearchContainerRouteVisible(!isSearchContainerVisible);
     // Additional logic or state updates can be added here
   };
 
   // For PUV
   const handleButtonPressPuv = () => {
+    setIsSearchContainerVisible(!isSearchContainerVisible);
     setIsSearchContainerPuvVisible(!isSearchContainerPuvVisible);
     // Additional logic or state updates can be added here
   };
@@ -293,6 +296,10 @@ const GooglePlacesInput = () => {
   const handleLayerPress = () => {
     setLayerMenuVisible(!layerMenuVisible);
   };
+  const handleSearchButtonPress = () => {
+    // Toggle the search container visibility
+    setSearchContainerVisible((prevVisibility) => !prevVisibility);
+  };
 
   const LayerMenu = ({ visible, onRequestClose }) => (
     <Modal
@@ -381,94 +388,98 @@ const GooglePlacesInput = () => {
           />
         )}
       </MapView>
-      <View
-        style={{
-          position: "absolute",
-          width: "90%",
-          top: Math.max(insets.top, 50),
-          zIndex: 10,
-          marginLeft: Math.max(insets.left, 38),
-          // marginLeft: Constants.statusBarHeight,
-        }}
-      >
-        <View style={styles.searchContainer}>
-          {isSearchContainerRouteVisible && (
-            <View>
-              <InputAutocomplete
-                label="Origin"
-                placeholder={"Enter origin"}
-                onPlaceSelected={(details) =>
-                  onPlaceSelected(details, "origin")
-                }
-              />
-              <InputAutocomplete
-                label="Destination"
-                placeholder={"Enter destination"}
-                onPlaceSelected={(details) =>
-                  onPlaceSelected(details, "destination")
-                }
-              />
-              <TouchableOpacity
-                style={styles.routeButton}
-                onPress={() => setShowDirections(!showDirections)}
-              >
-                <Text style={styles.buttonText}>Trace route</Text>
-              </TouchableOpacity>
+
+      {isSearchContainerVisible && (
+        <View
+          style={{
+            position: "absolute",
+            width: "90%",
+            top: Math.max(insets.top, 50),
+            zIndex: 10,
+            marginLeft: Math.max(insets.left, 38),
+            // marginLeft: Constants.statusBarHeight,
+          }}
+        >
+          <View style={styles.searchContainer}>
+            {isSearchContainerRouteVisible && (
               <View>
-                <Text>Distance: {distance.toFixed(2)} km</Text>
-                <Text>Duration: {Math.ceil(duration)} min </Text>
-              </View>
-            </View>
-          )}
-          {isSearchContainerPuvVisible && (
-            <View>
-              <InputAutocomplete
-                label="Origin"
-                placeholder={"Enter origin"}
-                onPlaceSelected={(details) =>
-                  onPlaceSelected(details, "origin")
-                }
-              />
-              <TouchableOpacity
-                style={styles.button}
-                onPress={shareLocationRoute}
-                activeOpacity={0.1}
-              >
-                <Icon
-                  name="map-marker"
-                  type="font-awesome"
-                  color="white"
-                  size={30}
+                <InputAutocomplete
+                  label="Origin"
+                  placeholder={"Enter origin"}
+                  onPlaceSelected={(details) =>
+                    onPlaceSelected(details, "origin")
+                  }
                 />
-                <Text>Activate Origin</Text>
-              </TouchableOpacity>
-
-              <InputAutocomplete
-                label="Destination"
-                placeholder={"Enter destination"}
-                onPlaceSelected={(details) =>
-                  onPlaceSelected(details, "destination")
-                }
-              />
-              <TouchableOpacity
-                style={styles.routeButton}
-                onPress={() => setShowDirections(!showDirections)}
-              >
-                <Text style={styles.buttonText}>Trace route</Text>
-              </TouchableOpacity>
-              <View>
-                <Text>Distance: {distance.toFixed(2)} km</Text>
-                <Text>Duration: {Math.ceil(duration)} min </Text>
+                <InputAutocomplete
+                  label="Destination"
+                  placeholder={"Enter destination"}
+                  onPlaceSelected={(details) =>
+                    onPlaceSelected(details, "destination")
+                  }
+                />
+                <TouchableOpacity
+                  style={styles.routeButton}
+                  onPress={() => setShowDirections(!showDirections)}
+                >
+                  <Text style={styles.buttonText}>Trace route</Text>
+                </TouchableOpacity>
+                <View>
+                  <Text>Distance: {distance.toFixed(2)} km</Text>
+                  <Text>Duration: {Math.ceil(duration)} min </Text>
+                </View>
               </View>
-            </View>
-          )}
-        </View>
+            )}
+            {isSearchContainerPuvVisible && (
+              <View>
+                <InputAutocomplete
+                  label="Origin"
+                  placeholder={"Enter origin"}
+                  onPlaceSelected={(details) =>
+                    onPlaceSelected(details, "origin")
+                  }
+                />
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={shareLocationRoute}
+                  activeOpacity={0.1}
+                >
+                  <Icon
+                    name="map-marker"
+                    type="font-awesome"
+                    color="white"
+                    size={30}
+                  />
+                  <Text>Activate Origin</Text>
+                </TouchableOpacity>
 
-        {/* <GooglePlacesInput /> */}
-      </View>
+                <InputAutocomplete
+                  label="Destination"
+                  placeholder={"Enter destination"}
+                  onPlaceSelected={(details) =>
+                    onPlaceSelected(details, "destination")
+                  }
+                />
+                <TouchableOpacity
+                  style={styles.routeButton}
+                  onPress={() => setShowDirections(!showDirections)}
+                >
+                  <Text style={styles.buttonText}>Trace route</Text>
+                </TouchableOpacity>
+                <View>
+                  <Text>Distance: {distance.toFixed(2)} km</Text>
+                  <Text>Duration: {Math.ceil(duration)} min </Text>
+                </View>
+              </View>
+            )}
+          </View>
+
+          {/* <GooglePlacesInput /> */}
+        </View>
+      )}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
+          // onPress={handleButtonPressRoute}
           onPress={handleButtonPressRoute}
           activeOpacity={0.1}
         >
@@ -484,7 +495,7 @@ const GooglePlacesInput = () => {
           activeOpacity={0.1}
         >
           <MaterialCommunityIcons
-            name={isSearchContainerRouteVisible ? "account" : "account-outline"}
+            name={isSearchContainerPuvVisible ? "account" : "account-outline"}
             color="white"
             size={30}
           />
