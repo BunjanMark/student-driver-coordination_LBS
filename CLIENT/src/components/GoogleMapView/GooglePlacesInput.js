@@ -14,8 +14,6 @@ import io from "socket.io-client";
 import { Modal } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { PROVIDER_GOOGLE } from "react-native-maps";
-import OptionView1 from "./OptionView1";
-
 
 // import { Platform } from "react-native";
 // import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
@@ -100,7 +98,9 @@ const GooglePlacesInput = () => {
   const [showDirections, setShowDirections] = useState(false);
   const [distance, setDistance] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isSearchContainerVisible, setIsSearchContainerVisible] =
+  const [isSearchContainerRouteVisible, setIsSearchContainerRouteVisible] =
+    useState(false);
+  const [isSearchContainerPuvVisible, setIsSearchContainerPuvVisible] =
     useState(false);
   const mapRef = useRef(null);
   const traceRouteOnReady = (args) => {
@@ -111,16 +111,15 @@ const GooglePlacesInput = () => {
       setDuration(args.duration);
     }
   };
-  const handleButtonPress = () => {
-    setIsSearchContainerVisible(!isSearchContainerVisible);
+  const handleButtonPressRoute = () => {
+    setIsSearchContainerRouteVisible(!isSearchContainerRouteVisible);
     // Additional logic or state updates can be added here
   };
-  const traceRoute = () => {
-    if (origin && destination) {
-      setShowDirections(true);
-      mapRef.current?.fitToCoordinates([origin, destination], { edgePadding });
-    }
+  const handleButtonPressPuv = () => {
+    setIsSearchContainerPuvVisible(!isSearchContainerPuvVisible);
+    // Additional logic or state updates can be added here
   };
+
   const shareLocation = async () => {
     try {
       // Get the current location
@@ -276,7 +275,7 @@ const GooglePlacesInput = () => {
           <TouchableOpacity
             style={styles.layerMenuItem}
             onPress={() => {
-              handleButtonPress();
+              handleButtonPressRoute();
             }}
           >
             <Text>Trace route!</Text>
@@ -384,7 +383,7 @@ const GooglePlacesInput = () => {
             <Text>Distance: {distance.toFixed(2)} km</Text>
             <Text>Duration: {Math.ceil(duration)} min </Text>
           </View> */}
-          {isSearchContainerVisible && (
+          {isSearchContainerRouteVisible && (
             <View>
               <InputAutocomplete
                 label="Origin"
@@ -448,18 +447,6 @@ const GooglePlacesInput = () => {
           showsHorizontalScrollIndicator={false}
         ></ScrollView>
       </View>
-      {/* You can customize the background color or other styles based on darkMode */}
-      {/* \\<View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ color: darkMode ? "white" : "black" }}></Text>
-      </View> */}
-
-      
     </SafeAreaView>
   );
 };
