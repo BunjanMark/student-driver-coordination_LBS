@@ -440,6 +440,19 @@ const GooglePlacesInput = () => {
                   onPlaceSelected(details, "origin")
                 }
               />
+              <TouchableOpacity
+                style={styles.button}
+                onPress={shareLocation}
+                activeOpacity={0.1}
+              >
+                <Icon
+                  name="map-marker"
+                  type="font-awesome"
+                  color="white"
+                  size={30}
+                />
+              </TouchableOpacity>
+
               <InputAutocomplete
                 label="Destination"
                 placeholder={"Enter destination"}
@@ -458,15 +471,6 @@ const GooglePlacesInput = () => {
                 <Text>Duration: {Math.ceil(duration)} min </Text>
               </View>
             </View>
-            // <SearchContainer
-            //   onPlaceSelected={(details, flag) => {
-            //     /* Handle place selection */
-            //   }}
-            //   distance={distance}
-            //   duration={duration}
-            //   showDirections={showDirections}
-            //   setShowDirections={setShowDirections}
-            // />
           )}
         </View>
 
