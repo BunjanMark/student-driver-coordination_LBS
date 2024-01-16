@@ -38,7 +38,7 @@ const LandingScreen = () => {
             fontWeight: "bold",
           }}
         >
-          HotSpot
+          HopSpot
         </Text>
         <SafeAreaView style={styles.buttonContainer}>
           <Button
@@ -58,7 +58,7 @@ const LandingScreen = () => {
             }}
             icon={"arrow-right"}
           >
-            Start to Join
+            Start To Join
           </Button>
         </SafeAreaView>
       </SafeAreaView>

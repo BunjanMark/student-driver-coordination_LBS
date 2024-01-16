@@ -7,11 +7,13 @@ import {
   StyleSheet,
   TextInput,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import SidebarMenu from "../components/SidebarMenu";
 import io from "socket.io-client";
 import { useDarkMode } from "../components/context/DarkModeContext";
+import { Feather } from "@expo/vector-icons"; 
 
 const socket = io("wss://websocket-server-hopspot.glitch.me/");
 
@@ -19,6 +21,7 @@ const History = () => {
   const { darkMode } = useDarkMode();
   const [locationUpdates, setLocationUpdates] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     loadLocationHistory();
@@ -73,8 +76,16 @@ const History = () => {
     );
   });
 
+  const handleSearch = () => {
+    const results = locationUpdates.filter((result) =>
+      result.address && result.address.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setSearchResults(results);
+  };
+
+
   return (
-    <SafeAreaView
+    <View
       style={[
         styles.container,
         {
@@ -92,13 +103,18 @@ const History = () => {
         <Text style={[styles.maintext, darkMode && styles.darkMaintext]}>
           LOCATION HISTORY
         </Text>
-        <TextInput
-          style={[styles.searchInput, darkMode && styles.darkSearchInput]}
-          placeholder="Search..."
-          placeholderTextColor={darkMode ? "black" : "white"}
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={[styles.searchInput, darkMode && styles.darkSearchInput]}
+            placeholder="Search..."
+            placeholderTextColor={darkMode ? "black" : "white"}
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+          <TouchableOpacity onPress={handleSearch} style={styles.searchIcon}>
+            <Feather name="search" size={24} color={darkMode ? "white" : "black"} />
+          </TouchableOpacity>
+        </View>
         <FlatList
           data={filteredLocationUpdates}
           keyExtractor={(item, index) => index.toString()}
@@ -120,7 +136,7 @@ const History = () => {
           }}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -129,7 +145,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   maintext: {
-    marginTop: 20,
+    marginTop: 50,
     margin: 10,
     fontSize: 18,
     fontWeight: "bold",
@@ -164,6 +180,31 @@ const styles = StyleSheet.create({
   },
   darkHistoryItem: {
     backgroundColor: "rgba(0, 0, 0, 0.7)",
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderColor: "white",
+    borderWidth: 3,
+    paddingLeft: 10,
+    color: "white",
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
+  darkSearchInput: {
+    color: "black",
+    borderColor: "black",
+  },
+  searchIcon: {
+    backgroundColor: "white",
+    padding: 8,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
   },
 });
 

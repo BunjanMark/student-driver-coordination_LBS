@@ -84,13 +84,12 @@ const Map = () => {
   const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView
+    <View
       style={{
         flex: 1,
         backgroundColor: darkMode ? "#575757" : "white",
       }}
     >
-      {/* <SidebarMenu /> */}
       {/* <View
         style={{
           position: "absolute",
@@ -120,7 +119,7 @@ const Map = () => {
       >
         <Text style={{ color: darkMode ? "white" : "black" }}></Text>
       </View> */}
-    </SafeAreaView>
+    </View>
   );
 };
 

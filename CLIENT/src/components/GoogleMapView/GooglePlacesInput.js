@@ -24,6 +24,8 @@ import io from "socket.io-client";
 import { Modal } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { PROVIDER_GOOGLE } from "react-native-maps";
+import SidebarMenu from "../SidebarMenu";
+import { IconButton } from "react-native-elements";
 
 // import { Platform } from "react-native";
 // import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
@@ -37,7 +39,6 @@ const edgePadding = {
   bottom: edgePaddingValue,
   left: edgePaddingValue,
 };
-
 const InputAutocomplete = ({ label, placeholder, onPlaceSelected }) => {
   return (
     <View>
@@ -111,6 +112,7 @@ const GooglePlacesInput = () => {
   const [locationUpdates, setLocationUpdates] = useState([]);
   const [userAddress, setUserAddress] = useState("");
   const [selectedLayer, setSelectedLayer] = useState("Terrain");
+  const [searchContainerVisible, setSearchContainerVisible] = useState(false);
 
   const [layerMenuVisible, setLayerMenuVisible] = useState(false);
   const { darkMode } = useDarkMode();
@@ -294,21 +296,32 @@ const GooglePlacesInput = () => {
     </Modal>
   );
 
+  const handleSearchButtonPress = () => {
+    setSearchContainerVisible(!searchContainerVisible);
+  };
+
+  const handleOptionSelect = (option) => {
+    // Perform specific actions based on the selected option
+    // For example, show corresponding input autocomplete or trigger route tracing
+    // You may also want to clear the selectedOption after handling the action
+    setSearchContainerVisible(false);
+  };
+
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: darkMode ? "#575757" : "white",
-      }}
-    >
-      {/* <SidebarMenu /> */}
+    <View style={styles.container}>
+    {/* Sidebar */}
+    <View style={styles.sidebarContainer}>
+      <SidebarMenu />
+    </View>
+
       <MapView
         ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        // showsUserLocation={true}
-        // showsMyLocationButton={true}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
         showsCompass={true}
-        // showsTraffic={true}
+        showsTraffic={true}
         tintColor="green"
         initialRegion={{
           latitude: 8.486097, // Local latitude
@@ -340,6 +353,7 @@ const GooglePlacesInput = () => {
           />
         )}
       </MapView>
+
       <View
         style={{
           position: "absolute",
@@ -350,34 +364,62 @@ const GooglePlacesInput = () => {
           // marginLeft: Constants.statusBarHeight,
         }}
       >
+        <View
+        style={{
+          position: "absolute",
+          width: "90%",
+          top: Math.max(insets.top, 40),
+          zIndex: 10,
+          marginLeft: Math.max(insets.left, 38),
+        }}
+      >
         <View style={styles.searchContainer}>
-          <InputAutocomplete
-            label="Origin"
-            placeholder={"Enter origin"}
-            onPlaceSelected={(details) => onPlaceSelected(details, "origin")}
-          />
-          <InputAutocomplete
-            label="Destination"
-            placeholder={"Enter destination"}
-            onPlaceSelected={(details) =>
-              onPlaceSelected(details, "destination")
-            }
-          />
-          <TouchableOpacity
-            style={styles.routeButton}
-            onPress={() => setShowDirections(!showDirections)}
-          >
-            <Text style={styles.buttonText}>Trace route</Text>
-          </TouchableOpacity>
-          <View>
-            <Text>Distance: {distance.toFixed(2)} km</Text>
-            <Text>Duration: {Math.ceil(duration)} min </Text>
-          </View>
+          {/* Components for Origin, Destination, and Route */}
+          {searchContainerVisible && (
+            <View>
+              <InputAutocomplete
+                label="Origin"
+                placeholder={"Enter origin"}
+                onPlaceSelected={(details) => onPlaceSelected(details, "origin")}
+              />
+              <InputAutocomplete
+                label="Destination"
+                placeholder={"Enter destination"}
+                onPlaceSelected={(details) =>
+                  onPlaceSelected(details, "destination")
+                }
+              />
+              <TouchableOpacity
+                style={styles.routeButton}
+                onPress={() => setShowDirections(!showDirections)}
+              >
+                <Text style={styles.buttonText}>Trace route</Text>
+              </TouchableOpacity>
+              <View>
+                <Text>Distance: {distance.toFixed(2)} km</Text>
+                <Text>Duration: {Math.ceil(duration)} min </Text>
+              </View>
+            </View>
+          )}
         </View>
-
-        {/* <GooglePlacesInput /> */}
       </View>
+      </View>
+
+     {/* <GooglePlacesInput /> */}
       <View style={styles.buttonContainer}>
+         {/* Button to Toggle Search Container */}
+         <TouchableOpacity
+            style={styles.button}
+            onPress={handleSearchButtonPress}
+            activeOpacity={0.1}
+          >
+            <Icon
+              name={searchContainerVisible ? "arrow-up" : "arrow-down"}
+              type="font-awesome"
+              color="white"
+              size={30}
+            />
+          </TouchableOpacity>
         <TouchableOpacity style={styles.layerOption} onPress={handleLayerPress}>
           <MaterialCommunityIcons name="layers" color="white" size={30} />
           <LayerMenu
@@ -409,15 +451,25 @@ const GooglePlacesInput = () => {
       >
         <Text style={{ color: darkMode ? "white" : "black" }}></Text>
       </View> */}
-    </SafeAreaView>
+    </View>
   );
 };
 
-export default GooglePlacesInput;
-
 const styles = StyleSheet.create({
-  searchContainer: {
+   container: {
+    flex: 1,
+  },
+  sidebarContainer: {
     position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 5, // Set a higher zIndex for the sidebar
+  },
+  map: {
+    flex: 1,
+  },
+  searchContainer: {
     width: "90%",
     backgroundColor: "white",
     shadowColor: "black",
@@ -427,6 +479,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     padding: 8,
     borderRadius: 8,
+    zIndex: 2,
   },
   input: {
     borderColor: "#888",
@@ -435,15 +488,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  map: {
-    width: "100%",
-    height: "98%",
-  },
   button: {
     width: 50,
     backgroundColor: "green",
     borderRadius: 20,
     padding: 10,
+    marginBottom: 10,
   },
   layerOption: {
     backgroundColor: "green",
@@ -459,6 +509,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderRadius: 10,
     padding: 10,
+    zIndex: 3,
   },
   layerMenuItem: {
     padding: 10,
@@ -471,6 +522,7 @@ const styles = StyleSheet.create({
     right: 15,
     bottom: 90,
     flexDirection: "column",
+    zIndex: 4,
   },
   routeButton: {
     backgroundColor: "green",
@@ -482,35 +534,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-//   const [origin, setOrigin] = useState("");
-//   const [destination, setDestination] = useState("");
-//   const [showDirections, setShowDirections] = useState(false);
-//   const [distance, setDistance] = useState(0);
-//   const [duration, setDuration] = useState(0);
-//   const mapRef = useRef("");
-//   return (
-//     <View style={styles.searchContainer}>
-//       <InputAutocomplete label="Origin" onPlaceSelected={() => {}} />
-//       <InputAutocomplete label="Destination" onPlaceSelected={() => {}} />
-//     </View>
-//   );
-// };
 
-// const styles = StyleSheet.create({
-//   searchContainer: {
-//     // position: "absolute",
-//     width: "90%",
-//     backgroundColor: "white",
-//     shadowColor: "black",
-//     shadowOffset: { width: 2, height: 2 },
-//     shadowOpacity: 0.5,
-//     shadowRadius: 4,
-//     elevation: 4,
-//     padding: 8,
-//     borderRadius: 8,
-//   },
-//   input: {
-//     borderColor: "#888",
-//     borderWidth: 1,
-//   },
-// });
+export default GooglePlacesInput;

@@ -10,9 +10,9 @@ import {
   Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SidebarMenu from "../components/SidebarMenu";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
+import { useNavigation, useIsFocused, } from "@react-navigation/native";
 import { useDarkMode } from "../components/context/DarkModeContext";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Settings = () => {
   const navigation = useNavigation();
@@ -119,17 +119,25 @@ const Settings = () => {
     setEditMode(!editMode);
   };
 
+  const handleBackPress = () => {
+    navigation.goBack();
+  };
+
   return (
     <SafeAreaView style={[styles.container, darkMode && styles.darkContainer]}>
-      <SidebarMenu />
       <Image
         source={require("../images/bg.png")}
         style={styles.backgroundImage}
       />
 
-      <Text style={[styles.heading, darkMode && styles.darkHeading]}>
-        Settings
-      </Text>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleBackPress} style={styles.backButtonContainer}>
+          <Text>
+            <Icon name="ios-arrow-back" size={24} color="black" /> 
+          </Text>
+        </TouchableOpacity>
+        <Text style={[styles.heading, darkMode && styles.darkHeading]}>Settings</Text>
+      </View>
 
       <TouchableOpacity onPress={handleAccountDetailsPress}>
         <View style={[styles.accountItem, darkMode && styles.darkAccountItem]}>
@@ -299,14 +307,19 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     zIndex: 0,
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+    marginTop: 30,
+  },
   heading: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
-    margin: 20,
+    marginLeft: 10,
   },
   darkHeading: {
-    color: "white", // Dark mode text color
+    color: "white",
   },
   subHeading: {
     fontSize: 18,
@@ -382,7 +395,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   logoutButton: {
-    backgroundColor: "red",
+    backgroundColor: "black",
     paddingVertical: 15,
     alignItems: "center",
     borderRadius: 8,
@@ -423,6 +436,9 @@ const styles = StyleSheet.create({
   },
   darkSaveButton: {
     backgroundColor: "#2980b9", // Dark mode save button background color
+  },
+  backButtonContainer: {
+    marginLeft: 10,
   },
 });
 

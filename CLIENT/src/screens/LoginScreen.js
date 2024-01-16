@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   Platform,
+  View,
 } from "react-native";
 import {
   Button,
@@ -22,8 +23,6 @@ import { useState } from "react";
 import Toast from "react-native-root-toast";
 import fetchServices from "../services/fetchServices";
 
-// fetchServices;
-
 const LoginScreen = () => {
   const navigator = useNavigation();
 
@@ -33,7 +32,7 @@ const LoginScreen = () => {
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const showToast = (message = "something went wrong") => {
+  const showToast = (message = "Something went wrong") => {
     Toast.show(message, 3000);
   };
 
@@ -48,7 +47,7 @@ const LoginScreen = () => {
       }
 
       const url =
-        "https://41a4-2001-4455-62c-c800-7c4c-e35c-5c46-cdbd.ngrok-free.app/api/login";
+        "https://389b-2001-4455-62c-c800-549d-68f4-c3fc-9dce.ngrok-free.app/api/login";
 
       const data = {
         email,
@@ -108,7 +107,7 @@ const LoginScreen = () => {
                 fontSize: widthPercentageToDP("8%"),
               }}
             >
-              Login
+              LOGIN
             </Text>
 
             <SafeAreaView style={{ gap: heightPercentageToDP("1%") }}>
@@ -139,13 +138,16 @@ const LoginScreen = () => {
                   />
                 }
               />
-              <Button
-                onPress={() => {
-                  navigator.navigate("AccountRecoveryScreen");
-                }}
-              >
-                Forgot password?
-              </Button>
+              <View style={styles.forgotPasswordContainer}>
+                <Text>Forgot password?</Text>
+                <Button
+                  onPress={() => {
+                    navigator.navigate("AccountRecoveryScreen");
+                  }}
+                >
+                  Recover
+                </Button>
+              </View>
             </SafeAreaView>
             <Button
               style={{ ...styles.buttonStyle, backgroundColor: "black" }}
@@ -156,7 +158,7 @@ const LoginScreen = () => {
               disabled={loading}
               labelStyle={{ color: "white" }}
             >
-              Log in
+              Log In
             </Button>
 
             <SafeAreaView
@@ -175,7 +177,7 @@ const LoginScreen = () => {
                 loading={loading}
                 disabled={loading}
               >
-                Sign up now
+                Sign Up Now
               </Button>
             </SafeAreaView>
             <Button
@@ -186,7 +188,7 @@ const LoginScreen = () => {
               loading={loading}
               disabled={loading}
             >
-              go back
+              Go Back
             </Button>
           </KeyboardAvoidingView>
         </SafeAreaView>
@@ -216,7 +218,7 @@ const styles = StyleSheet.create({
     width: widthPercentageToDP("25%"),
     height: heightPercentageToDP("25%"),
     position: "absolute",
-    top: heightPercentageToDP("-4%"),
+    top: heightPercentageToDP("-10%"),
     left: widthPercentageToDP("-7%"),
     alignSelf: "flex-start",
   },
@@ -229,6 +231,12 @@ const styles = StyleSheet.create({
     // Define your Button styles here
     width: widthPercentageToDP("80%"),
     height: heightPercentageToDP("6%"),
+    marginBottom: heightPercentageToDP("2%"),
+  },
+  forgotPasswordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: heightPercentageToDP("2%"),
   },
 });

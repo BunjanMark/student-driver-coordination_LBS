@@ -7,25 +7,14 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { SearchBar } from "react-native-elements";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useDarkMode } from "../components/context/DarkModeContext";
 
-const FixedHeader = () => {
+const FixedHeader = ({ username }) => {
   const { darkMode } = useDarkMode();
   const navigator = useNavigation();
   const isFocused = useIsFocused();
-
-  const [search, setSearch] = useState("");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-  const updateSearch = (text) => {
-    setSearch(text);
-  };
-
-  const clearSearch = () => {
-    setSearch("");
-  };
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -44,29 +33,13 @@ const FixedHeader = () => {
 
   return (
     <TouchableWithoutFeedback onPress={closeSidebar}>
-      <View style={[styles.header, darkMode && styles.darkHeader]}>
-        <TouchableOpacity style={styles.sidebarButton} onPress={toggleSidebar}>
-          <Icon name="menu" size={25} color={darkMode ? "white" : "black"} />
-        </TouchableOpacity>
-
-
-        <View style={styles.searchBar}>
-          <SearchBar
-            placeholder="Search..."
-            placeholderTextColor={darkMode ? "white" : "black"}
-            onChangeText={updateSearch}
-            onClear={clearSearch}
-            value={search}
-            containerStyle={styles.searchBarContainer}
-            inputContainerStyle={styles.searchBarInputContainer}
-            searchIcon={{ color: darkMode ? "white" : "black", size: 25 }}
-            inputStyle={{ color: darkMode ? "white" : "black" }}
-            clearIcon={{ color: darkMode ? "white" : "black" }}
-          />
-        </View>
-
+      <View style={[styles.container]}>
         {isSidebarOpen && isFocused && (
           <View style={[styles.sidebar, darkMode && styles.darkSidebar]}>
+             {/* Display user's name in the sidebar */}
+             <Text style={[styles.sidebarText, darkMode && styles.darkSidebarText]}>
+              {username}
+            </Text>
             <TouchableOpacity
               style={styles.sidebarItem}
               onPress={() => {
@@ -123,12 +96,22 @@ const FixedHeader = () => {
             </TouchableOpacity>
           </View>
         )}
+         <TouchableOpacity
+          style={[styles.sidebarButton, darkMode && styles.darkSidebarButton]}
+          onPress={toggleSidebar}
+        >
+          <Icon name="menu" size={25} color={darkMode ? "white" : "black"} />
+        </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: "relative",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -137,7 +120,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderWidth: 3,
     padding: 1,
-    position: "fixed",
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
@@ -148,21 +131,14 @@ const styles = StyleSheet.create({
     borderColor: "#76737e", // Dark mode border color
   },
   sidebarButton: {
+    position: "absolute",
+    top: 10, // Adjust the top position as needed
+    left: 10, // Adjust the left position as needed
     padding: 15,
+    zIndex: 2, // Make sure the sidebar button is above the sidebar
   },
-  searchBar: {
-    flex: 1,
-    marginRight: 10,
-  },
-  searchBarContainer: {
-    backgroundColor: "transparent",
-    borderBottomColor: "transparent",
-    borderTopColor: "transparent",
-    padding: 0,
-    margin: 0,
-  },
-  searchBarInputContainer: {
-    backgroundColor: "transparent",
+  darkSidebarButton: {
+    backgroundColor: "#575757", // Dark mode background color
   },
   sidebar: {
     flex: 1,

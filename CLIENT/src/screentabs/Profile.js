@@ -183,7 +183,7 @@ const Profile = () => {
                   isEditingUsername ? "content-save-edit-outline" : "pencil"
                 }
                 size={24}
-                color="blue"
+                color="black"
               />
             </TouchableOpacity>
           </View>
@@ -361,14 +361,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   logoutButton: {
-    backgroundColor: "#f02b49",
-    paddingVertical: 5,
-    paddingHorizontal: 30,
+    backgroundColor: "black",
+    paddingVertical: 20,
+    paddingHorizontal: 60,
     alignItems: "center",
     borderRadius: 15,
     marginBottom: 0,
     marginTop: 500,
     position: "relative",
+    flexDirection: "row",
   },
   darkLogoutButton: {
     backgroundColor: "#f02b49", // Dark mode background color
