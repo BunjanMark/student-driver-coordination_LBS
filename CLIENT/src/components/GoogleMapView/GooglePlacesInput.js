@@ -136,13 +136,7 @@ const GooglePlacesInput = () => {
       // Get the current location
       let location = await Location.getCurrentPositionAsync({});
       console.log("Location shared:", location);
-      console.log("test", location.coords.latitude);
 
-      const current_position = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-      moveTo(current_position);
       // Get the address from the coordinates using the Geocoding API
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=AIzaSyAkNA3MvoAczGTmO4gSqCbwKho1xPqRKyI`
@@ -233,7 +227,12 @@ const GooglePlacesInput = () => {
       // Get the current location
       let location = await Location.getCurrentPositionAsync({});
       console.log("Location shared:", location);
+      const current_position = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
 
+      moveTo(current_position);
       // Get the address from the coordinates using the Geocoding API
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
