@@ -1,21 +1,11 @@
 import { View, Text, Button } from "react-native";
-
-import { useNavigation } from "@react-navigation/native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import {SafeAreaView,useSafeAreaInsets,} from "react-native-safe-area-context";
 import React, { useState, useRef, useEffect } from "react";
-
 import { useDarkMode } from "../../components/context/DarkModeContext";
-import {
-  GooglePlacesAutocomplete,
-  GooglePlaceDetail,
-} from "react-native-google-places-autocomplete";
+import {GooglePlacesAutocomplete, GooglePlaceDetail,} from "react-native-google-places-autocomplete";
 import { GOOGLE_API_KEY } from "../../services/GoogleApiKey";
 import { StyleSheet } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
-
 import { TouchableOpacity, ScrollView } from "react-native";
 import { Icon } from "react-native-elements";
 import * as Location from "expo-location";
@@ -164,6 +154,7 @@ const GooglePlacesInput = () => {
 
         // return granted === RESULTS.GRANTED;
         // Set the location and address in state
+        
         if (Platform.OS === "ios") {
           const { status } = await Location.setAccuracyAsync(
             Location.Accuracy.Highest
@@ -318,6 +309,7 @@ const GooglePlacesInput = () => {
   return (
     <SafeAreaView
       style={{
+      
         backgroundColor: darkMode ? "#575757" : "white",
       }}
     >
@@ -365,7 +357,7 @@ const GooglePlacesInput = () => {
         style={{
           position: "absolute",
           width: "90%",
-          top: Math.max(insets.top, 40),
+          top: Math.max(insets.top, 50),
           zIndex: 10,
           marginLeft: Math.max(insets.left, 38),
           // marginLeft: Constants.statusBarHeight,
@@ -395,6 +387,7 @@ const GooglePlacesInput = () => {
             <Text>Duration: {Math.ceil(duration)} min </Text>
           </View> */}
           {isSearchContainerRouteVisible && (
+
             <View>
               <InputAutocomplete
                 label="Origin"
@@ -474,6 +467,7 @@ const GooglePlacesInput = () => {
           )}
         </View>
 
+        
         {/* <GooglePlacesInput /> */}
       </View>
       <View style={styles.buttonContainer}>
@@ -525,9 +519,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
+    
     width: "100%",
-    height: "98%",
+    height: "103%",
+    
+   
   },
+
   button: {
     width: 50,
     backgroundColor: "green",
@@ -570,6 +568,13 @@ const styles = StyleSheet.create({
   buttonText: {
     textAlign: "center",
     color: "white",
+  },
+
+  customButton: {
+    backgroundColor: "purple",
+    paddingVertical: 12,
+    marginTop: 16,
+    borderRadius: 5,
   },
 });
 //   const [origin, setOrigin] = useState("");

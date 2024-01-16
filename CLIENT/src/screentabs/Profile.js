@@ -183,7 +183,7 @@ const Profile = () => {
                   isEditingUsername ? "content-save-edit-outline" : "pencil"
                 }
                 size={24}
-                color="blue"
+                color=""
               />
             </TouchableOpacity>
           </View>
@@ -191,7 +191,7 @@ const Profile = () => {
           <View style={styles.actionContainer}>
             {[
               {
-                onPress: handleMyProfile,
+                onPress: () => navigator.navigate("Profile"),
                 iconName: "user",
                 text: " My Profile     ",
               },
@@ -201,7 +201,7 @@ const Profile = () => {
                 text: " Settings     ",
               },
               {
-                onPress: handleLocation,
+                onPress:() => navigator.navigate("Map"),
                 iconName: "map-marker",
                 text: " Location     ",
               },
@@ -266,12 +266,12 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     width: "100%",
-    height: "100%",
+    height: "106%",
     zIndex: 0,
   },
   userProfile: {
     alignItems: "center",
-    marginTop: 200,
+    marginTop: 260,
     zIndex: 1,
     position: "absolute",
     top: "1%",
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   darkUserName: {
-    color: "black", // Dark mode text color
+    color: "white", // Dark mode text color
   },
   editableUsername: {
     fontSize: 20,

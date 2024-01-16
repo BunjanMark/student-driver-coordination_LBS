@@ -74,7 +74,7 @@ const History = () => {
   });
 
   return (
-    <SafeAreaView
+    <View
       style={[
         styles.container,
         {
@@ -120,7 +120,7 @@ const History = () => {
           }}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   maintext: {
-    marginTop: 20,
+    marginTop: 70,
     margin: 10,
     fontSize: 18,
     fontWeight: "bold",
