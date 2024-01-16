@@ -24,6 +24,7 @@ import io from "socket.io-client";
 import { Modal } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { PROVIDER_GOOGLE } from "react-native-maps";
+import OptionView1 from "./OptionView1";
 
 // import { Platform } from "react-native";
 // import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
@@ -61,51 +62,39 @@ const InputAutocomplete = ({ label, placeholder, onPlaceSelected }) => {
     </View>
   );
 };
-
-const handleLayerPress = () => {
-  setLayerMenuVisible(!layerMenuVisible);
+const SearchContainer = ({
+  onPlaceSelected,
+  distance,
+  duration,
+  showDirections,
+  setShowDirections,
+}) => {
+  return (
+    <View style={styles.searchContainer}>
+      <InputAutocomplete
+        label="Origin"
+        placeholder={"Enter origin"}
+        onPlaceSelected={(details) => onPlaceSelected(details, "origin")}
+      />
+      <InputAutocomplete
+        label="Destination"
+        placeholder={"Enter destination"}
+        onPlaceSelected={(details) => onPlaceSelected(details, "destination")}
+      />
+      <TouchableOpacity
+        style={styles.routeButton}
+        onPress={() => setShowDirections(!showDirections)}
+      >
+        <Text style={styles.buttonText}>Trace route</Text>
+      </TouchableOpacity>
+      <View>
+        <Text>Distance: {distance.toFixed(2)} km</Text>
+        <Text>Duration: {Math.ceil(duration)} min </Text>
+      </View>
+    </View>
+  );
 };
 
-const LayerMenu = ({ visible, onRequestClose }) => (
-  <Modal
-    animationType="slide"
-    transparent={true}
-    visible={visible}
-    onRequestClose={onRequestClose}
-  >
-    <View style={styles.layerMenuContainer}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <TouchableOpacity
-          style={styles.layerMenuItem}
-          onPress={() => {
-            setSelectedLayer("Legend 1");
-            onRequestClose();
-          }}
-        >
-          <Text>Legend 1</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.layerMenuItem}
-          onPress={() => {
-            setSelectedLayer("Legend 2");
-            onRequestClose();
-          }}
-        >
-          <Text>Legend 2</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.layerMenuItem}
-          onPress={() => {
-            setSelectedLayer("Legend 3");
-            onRequestClose();
-          }}
-        >
-          <Text>Legend 3</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
-  </Modal>
-);
 const GooglePlacesInput = () => {
   const [location, setLocation] = useState(null);
   const [locationUpdates, setLocationUpdates] = useState([]);
@@ -120,6 +109,8 @@ const GooglePlacesInput = () => {
   const [showDirections, setShowDirections] = useState(false);
   const [distance, setDistance] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isSearchContainerVisible, setIsSearchContainerVisible] =
+    useState(false);
   const mapRef = useRef(null);
   const traceRouteOnReady = (args) => {
     if (args) {
@@ -128,6 +119,10 @@ const GooglePlacesInput = () => {
       setDistance(args.distance);
       setDuration(args.duration);
     }
+  };
+  const handleButtonPress = () => {
+    setIsSearchContainerVisible(!isSearchContainerVisible);
+    // Additional logic or state updates can be added here
   };
   const traceRoute = () => {
     if (origin && destination) {
@@ -289,11 +284,10 @@ const GooglePlacesInput = () => {
           <TouchableOpacity
             style={styles.layerMenuItem}
             onPress={() => {
-              setSelectedLayer("Legend 1");
-              onRequestClose();
+              handleButtonPress();
             }}
           >
-            <Text>Legend 1</Text>
+            <Text>Trace route!</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.layerMenuItem}
@@ -302,7 +296,7 @@ const GooglePlacesInput = () => {
               onRequestClose();
             }}
           >
-            <Text>Legend 2</Text>
+            <Text>nearest PUV</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.layerMenuItem}
@@ -375,7 +369,7 @@ const GooglePlacesInput = () => {
         }}
       >
         <View style={styles.searchContainer}>
-          <InputAutocomplete
+          {/* <InputAutocomplete
             label="Origin"
             placeholder={"Enter origin"}
             onPlaceSelected={(details) => onPlaceSelected(details, "origin")}
@@ -396,7 +390,44 @@ const GooglePlacesInput = () => {
           <View>
             <Text>Distance: {distance.toFixed(2)} km</Text>
             <Text>Duration: {Math.ceil(duration)} min </Text>
-          </View>
+          </View> */}
+          {isSearchContainerVisible && (
+            <View>
+              <InputAutocomplete
+                label="Origin"
+                placeholder={"Enter origin"}
+                onPlaceSelected={(details) =>
+                  onPlaceSelected(details, "origin")
+                }
+              />
+              <InputAutocomplete
+                label="Destination"
+                placeholder={"Enter destination"}
+                onPlaceSelected={(details) =>
+                  onPlaceSelected(details, "destination")
+                }
+              />
+              <TouchableOpacity
+                style={styles.routeButton}
+                onPress={() => setShowDirections(!showDirections)}
+              >
+                <Text style={styles.buttonText}>Trace route</Text>
+              </TouchableOpacity>
+              <View>
+                <Text>Distance: {distance.toFixed(2)} km</Text>
+                <Text>Duration: {Math.ceil(duration)} min </Text>
+              </View>
+            </View>
+            // <SearchContainer
+            //   onPlaceSelected={(details, flag) => {
+            //     /* Handle place selection */
+            //   }}
+            //   distance={distance}
+            //   duration={duration}
+            //   showDirections={showDirections}
+            //   setShowDirections={setShowDirections}
+            // />
+          )}
         </View>
 
         {/* <GooglePlacesInput /> */}
