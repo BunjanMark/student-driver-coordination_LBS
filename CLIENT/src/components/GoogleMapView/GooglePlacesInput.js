@@ -57,38 +57,6 @@ const InputAutocomplete = ({ label, placeholder, onPlaceSelected }) => {
     </View>
   );
 };
-const SearchContainer = ({
-  onPlaceSelected,
-  distance,
-  duration,
-  showDirections,
-  setShowDirections,
-}) => {
-  return (
-    <View style={styles.searchContainer}>
-      <InputAutocomplete
-        label="Origin"
-        placeholder={"Enter origin"}
-        onPlaceSelected={(details) => onPlaceSelected(details, "origin")}
-      />
-      <InputAutocomplete
-        label="Destination"
-        placeholder={"Enter destination"}
-        onPlaceSelected={(details) => onPlaceSelected(details, "destination")}
-      />
-      <TouchableOpacity
-        style={styles.routeButton}
-        onPress={() => setShowDirections(!showDirections)}
-      >
-        <Text style={styles.buttonText}>Trace route</Text>
-      </TouchableOpacity>
-      <View>
-        <Text>Distance: {distance.toFixed(2)} km</Text>
-        <Text>Duration: {Math.ceil(duration)} min </Text>
-      </View>
-    </View>
-  );
-};
 
 const GooglePlacesInput = () => {
   const [location, setLocation] = useState(null);
@@ -218,10 +186,6 @@ const GooglePlacesInput = () => {
     }
   };
 
-  const shareLocation_onPlaceSelected = (detials, flag) => {
-    shareLocation();
-    onPlaceSelected(details, flag);
-  };
   const shareLocationRoute = async () => {
     try {
       // Get the current location
@@ -424,28 +388,6 @@ const GooglePlacesInput = () => {
         }}
       >
         <View style={styles.searchContainer}>
-          {/* <InputAutocomplete
-            label="Origin"
-            placeholder={"Enter origin"}
-            onPlaceSelected={(details) => onPlaceSelected(details, "origin")}
-          />
-          <InputAutocomplete
-            label="Destination"
-            placeholder={"Enter destination"}
-            onPlaceSelected={(details) =>
-              onPlaceSelected(details, "destination")
-            }
-          />
-          <TouchableOpacity
-            style={styles.routeButton}
-            onPress={() => setShowDirections(!showDirections)}
-          >
-            <Text style={styles.buttonText}>Trace route</Text>
-          </TouchableOpacity>
-          <View>
-            <Text>Distance: {distance.toFixed(2)} km</Text>
-            <Text>Duration: {Math.ceil(duration)} min </Text>
-          </View> */}
           {isSearchContainerRouteVisible && (
             <View>
               <InputAutocomplete
