@@ -1,8 +1,14 @@
 import { View, Text, Button } from "react-native";
-import {SafeAreaView,useSafeAreaInsets,} from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import React, { useState, useRef, useEffect } from "react";
 import { useDarkMode } from "../../components/context/DarkModeContext";
-import {GooglePlacesAutocomplete, GooglePlaceDetail,} from "react-native-google-places-autocomplete";
+import {
+  GooglePlacesAutocomplete,
+  GooglePlaceDetail,
+} from "react-native-google-places-autocomplete";
 import { GOOGLE_API_KEY } from "../../services/GoogleApiKey";
 import { StyleSheet } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
@@ -154,7 +160,7 @@ const GooglePlacesInput = () => {
 
         // return granted === RESULTS.GRANTED;
         // Set the location and address in state
-        
+
         if (Platform.OS === "ios") {
           const { status } = await Location.setAccuracyAsync(
             Location.Accuracy.Highest
@@ -309,7 +315,6 @@ const GooglePlacesInput = () => {
   return (
     <SafeAreaView
       style={{
-      
         backgroundColor: darkMode ? "#575757" : "white",
       }}
     >
@@ -387,7 +392,6 @@ const GooglePlacesInput = () => {
             <Text>Duration: {Math.ceil(duration)} min </Text>
           </View> */}
           {isSearchContainerRouteVisible && (
-
             <View>
               <InputAutocomplete
                 label="Origin"
@@ -467,7 +471,6 @@ const GooglePlacesInput = () => {
           )}
         </View>
 
-        
         {/* <GooglePlacesInput /> */}
       </View>
       <View style={styles.buttonContainer}>
@@ -519,11 +522,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    
     width: "100%",
     height: "103%",
-    
-   
   },
 
   button: {
@@ -577,35 +577,3 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
 });
-//   const [origin, setOrigin] = useState("");
-//   const [destination, setDestination] = useState("");
-//   const [showDirections, setShowDirections] = useState(false);
-//   const [distance, setDistance] = useState(0);
-//   const [duration, setDuration] = useState(0);
-//   const mapRef = useRef("");
-//   return (
-//     <View style={styles.searchContainer}>
-//       <InputAutocomplete label="Origin" onPlaceSelected={() => {}} />
-//       <InputAutocomplete label="Destination" onPlaceSelected={() => {}} />
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   searchContainer: {
-//     // position: "absolute",
-//     width: "90%",
-//     backgroundColor: "white",
-//     shadowColor: "black",
-//     shadowOffset: { width: 2, height: 2 },
-//     shadowOpacity: 0.5,
-//     shadowRadius: 4,
-//     elevation: 4,
-//     padding: 8,
-//     borderRadius: 8,
-//   },
-//   input: {
-//     borderColor: "#888",
-//     borderWidth: 1,
-//   },
-// });
