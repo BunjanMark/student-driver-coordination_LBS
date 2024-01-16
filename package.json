@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "expo-permissions": "^14.4.0"
+    "expo-permissions": "~14.2.1"
   }
 }
