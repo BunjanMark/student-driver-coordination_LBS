@@ -130,12 +130,19 @@ const GooglePlacesInput = () => {
     // Additional logic or state updates can be added here
   };
 
+  // To be useEffect
   const shareLocation = async () => {
     try {
       // Get the current location
       let location = await Location.getCurrentPositionAsync({});
       console.log("Location shared:", location);
+      console.log("test", location.coords.latitude);
 
+      const current_position = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+      moveTo(current_position);
       // Get the address from the coordinates using the Geocoding API
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=AIzaSyAkNA3MvoAczGTmO4gSqCbwKho1xPqRKyI`
@@ -208,11 +215,60 @@ const GooglePlacesInput = () => {
           },
           address: formattedAddress, // Send the formatted address to the server
         });
+        moveTo(location);
       } else {
         console.error("Geocoding API request failed");
       }
     } catch (error) {
       console.error("Error sharing location:", error);
+    }
+  };
+
+  const shareLocation_onPlaceSelected = (detials, flag) => {
+    shareLocation();
+    onPlaceSelected(details, flag);
+  };
+  const shareLocationRoute = async () => {
+    try {
+      // Get the current location
+      let location = await Location.getCurrentPositionAsync({});
+      console.log("Location shared:", location);
+
+      // Get the address from the coordinates using the Geocoding API
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
+      );
+
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results.length > 0) {
+        // Extract the formatted address from the response
+        const formattedAddress = data.results[0].formatted_address;
+        console.log("Formatted Address:", formattedAddress);
+
+        // Return the details object
+        return {
+          description: formattedAddress,
+          place_id: data.results[0].place_id,
+          structured_formatting: {
+            main_text: formattedAddress,
+            secondary_text: "",
+          },
+          types: ["current_location"],
+          geometry: {
+            location: {
+              lat: location.coords.latitude,
+              lng: location.coords.longitude,
+            },
+          },
+        };
+      } else {
+        console.error("Geocoding API request failed");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error sharing location:", error);
+      return null;
     }
   };
 
@@ -418,15 +474,6 @@ const GooglePlacesInput = () => {
                 <Text>Duration: {Math.ceil(duration)} min </Text>
               </View>
             </View>
-            // <SearchContainer
-            //   onPlaceSelected={(details, flag) => {
-            //     /* Handle place selection */
-            //   }}
-            //   distance={distance}
-            //   duration={duration}
-            //   showDirections={showDirections}
-            //   setShowDirections={setShowDirections}
-            // />
           )}
           {isSearchContainerPuvVisible && (
             <View>
@@ -439,7 +486,7 @@ const GooglePlacesInput = () => {
               />
               <TouchableOpacity
                 style={styles.button}
-                onPress={shareLocation}
+                onPress={shareLocationRoute}
                 activeOpacity={0.1}
               >
                 <Icon
@@ -448,6 +495,7 @@ const GooglePlacesInput = () => {
                   color="white"
                   size={30}
                 />
+                <Text>Activate Origin</Text>
               </TouchableOpacity>
 
               <InputAutocomplete
