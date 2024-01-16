@@ -401,7 +401,7 @@ const GooglePlacesInput = () => {
           }}
         >
           <View style={styles.searchContainer}>
-            {isSearchContainerRouteVisible && (
+            {isSearchContainerVisible && isSearchContainerRouteVisible && (
               <View>
                 <InputAutocomplete
                   label="Origin"
@@ -429,7 +429,7 @@ const GooglePlacesInput = () => {
                 </View>
               </View>
             )}
-            {isSearchContainerPuvVisible && (
+            {isSearchContainerPuvVisible && isSearchContainerVisible && (
               <View>
                 <InputAutocomplete
                   label="Origin"
