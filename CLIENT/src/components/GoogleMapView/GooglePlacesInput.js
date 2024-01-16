@@ -24,7 +24,6 @@ import io from "socket.io-client";
 import { Modal } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { PROVIDER_GOOGLE } from "react-native-maps";
-import OptionView1 from "./OptionView1";
 
 // import { Platform } from "react-native";
 // import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
@@ -109,7 +108,9 @@ const GooglePlacesInput = () => {
   const [showDirections, setShowDirections] = useState(false);
   const [distance, setDistance] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isSearchContainerVisible, setIsSearchContainerVisible] =
+  const [isSearchContainerRouteVisible, setIsSearchContainerRouteVisible] =
+    useState(false);
+  const [isSearchContainerPuvVisible, setIsSearchContainerPuvVisible] =
     useState(false);
   const mapRef = useRef(null);
   const traceRouteOnReady = (args) => {
@@ -121,7 +122,11 @@ const GooglePlacesInput = () => {
     }
   };
   const handleButtonPressRoute = () => {
-    setIsSearchContainerVisible(!isSearchContainerVisible);
+    setIsSearchContainerRouteVisible(!isSearchContainerVisible);
+    // Additional logic or state updates can be added here
+  };
+  const handleButtonPressPuv = () => {
+    setIsSearchContainerPuvVisible(!isSearchContainerVisible);
     // Additional logic or state updates can be added here
   };
 
