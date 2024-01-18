@@ -191,64 +191,89 @@ const GooglePlacesInput = () => {
       console.error("Error sharing location:", error);
     }
   };
-
   const shareLocationPuv = async () => {
     try {
-      // Get the current location
-      let location = await Location.getCurrentPositionAsync({});
-      console.log("Location shared:", location);
-      const current_position = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-      onPlaceSelectedPuv(current_position, "origin");
-      // moveTo(current_position);
-      // Get the address from the coordinates using the Geocoding API
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
-      );
+      setActive(!active);
 
-      const data = await response.json();
-
-      if (data.status === "OK" && data.results.length > 0) {
-        // Extract the formatted address from the response
-        const formattedAddress = data.results[0].formatted_address;
-        console.log("Formatted Address:", formattedAddress);
-
-        // Return the details object
-        return {
-          description: formattedAddress,
-          place_id: data.results[0].place_id,
-          structured_formatting: {
-            main_text: formattedAddress,
-            secondary_text: "",
-          },
-          types: ["current_location"],
-          geometry: {
-            location: {
-              lat: location.coords.latitude,
-              lng: location.coords.longitude,
-            },
-          },
+      if (!active === true) {
+        // Get the current location
+        let location = await Location.getCurrentPositionAsync({});
+        // console.log("Location shared:", location);
+        const current_position = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
         };
-      } else {
-        console.error("Geocoding API request failed");
-        return null;
+
+        // setActive(!active);
+
+        console.log(active);
+        window.alert(active);
+        onPlaceSelectedPuv(current_position, "origin");
+        // moveTo(current_position);
+        // Get the address from the coordinates using the Geocoding API
+        const response = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
+        );
+
+        const data = await response.json();
+
+        if (data.status === "OK" && data.results.length > 0) {
+          // Extract the formatted address from the response
+          const formattedAddress = data.results[0].formatted_address;
+          // console.log("Formatted Address:", formattedAddress);
+
+          // Return the details object
+          return {
+            description: formattedAddress,
+            place_id: data.results[0].place_id,
+            structured_formatting: {
+              main_text: formattedAddress,
+              secondary_text: "",
+            },
+            types: ["current_location"],
+            geometry: {
+              location: {
+                lat: location.coords.latitude,
+                lng: location.coords.longitude,
+              },
+            },
+          };
+        } else {
+          console.error("Geocoding API request failed");
+          return null;
+        }
       }
     } catch (error) {
       console.error("Error sharing location:", error);
       return null;
     }
   };
+  // const activateLocationButtonInterval = () => {
+  //   setActive(!active);
+  //   if (!active) {
+  //     setInterval(shareLocationPuv, 5000);
+  //   } else {
+  //     clearInterval();
+  //   }
+  // };
+  // setTimeout(() => {
+  //   condition = active;
 
+  //   // Stop running the function
+  //   activateLocationButtonInterval(condition);
+  // }, 10000);
+
+  const activateShareLocationPuv = () => {};
   const moveTo = async (position) => {
     const camera = await mapRef.current?.getCamera();
     if (camera) {
       camera.center = position;
-      mapRef.current?.animateCamera(camera, { duration: 1000 });
+      mapRef.current?.animateCamera(camera, { duration: 2000 });
     }
   };
-
+  const handleActivateLocation = () => {
+    activateLocationButtonInterval();
+  };
   const onPlaceSelected = (details, flag) => {
     const set = flag === "origin" ? setOrigin : setDestination;
 
@@ -452,13 +477,6 @@ const GooglePlacesInput = () => {
             )}
             {isSearchContainerPuvVisible && isSearchContainerVisible && (
               <View>
-                <InputAutocomplete
-                  label="Origin"
-                  placeholder={"Enter origin"}
-                  onPlaceSelected={(details) =>
-                    onPlaceSelected(details, "origin")
-                  }
-                />
                 <TouchableOpacity
                   style={styles.button}
                   onPress={shareLocationPuv}
@@ -470,7 +488,7 @@ const GooglePlacesInput = () => {
                     color="white"
                     size={30}
                   />
-                  <Text>Activate Origin</Text>
+                  <Text>{active ? "Deactivate" : "Activate"} Origin</Text>
                 </TouchableOpacity>
 
                 <InputAutocomplete
