@@ -1,4 +1,4 @@
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, Touchable } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -40,6 +40,7 @@ const InputAutocomplete = ({ label, placeholder, onPlaceSelected }) => {
     <View>
       <Text>{label}</Text>
       <GooglePlacesAutocomplete
+        autoFillOnNotFound={true}
         styles={{ textInput: styles.input }}
         fetchDetails={true}
         placeholder={placeholder}
@@ -81,6 +82,8 @@ const GooglePlacesInput = () => {
     useState(false);
   const mapRef = useRef(null);
   const [active, setActive] = useState(false);
+  const [driverActive, setDriverActive] = useState(false);
+  const [countdown, setCountdown] = useState();
   const traceRouteOnReady = (args) => {
     if (args) {
       // args.distance
@@ -113,7 +116,7 @@ const GooglePlacesInput = () => {
 
       // Get the address from the coordinates using the Geocoding API
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=AIzaSyAkNA3MvoAczGTmO4gSqCbwKho1xPqRKyI`
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
       );
 
       const data = await response.json();
@@ -191,62 +194,154 @@ const GooglePlacesInput = () => {
       console.error("Error sharing location:", error);
     }
   };
+  const toggleActive = (value) => {
+    setActive(value);
+  };
+
   const shareLocationPuv = async () => {
     try {
-      setActive(!active);
+      let location = await Location.getCurrentPositionAsync({});
+      console.log("Location shared:", location);
+      const current_position = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
 
-      if (!active === true) {
-        // Get the current location
-        let location = await Location.getCurrentPositionAsync({});
-        // console.log("Location shared:", location);
-        const current_position = {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
+      // setActive(!active);
+
+      console.log(active);
+
+      // window.alert(active);
+      onPlaceSelectedPuv(current_position, "origin");
+
+      // moveTo(current_position);
+      // Get the address from the coordinates using the Geocoding API
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
+      );
+
+      const data = await response.json();
+
+      if (data.status === "OK" && data.results.length > 0) {
+        // Extract the formatted address from the response
+        const formattedAddress = data.results[0].formatted_address;
+        console.log("Formatted Address:", formattedAddress);
+        if (Platform.OS === "ios") {
+          const { status } = await Location.setAccuracyAsync(
+            Location.Accuracy.Highest
+          );
+          if (status !== "granted") {
+            Alert.alert(
+              "Insufficient permissions!",
+              "Sorry, we need location permissions to make this work!",
+              [{ text: "Okay" }]
+            );
+            return;
+          }
+        }
+
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          setErrorMsg("Permission to access location was denied");
+          return;
+        }
+        setLocation(location);
+        setUserAddress(formattedAddress);
+
+        // Emit the location data to the Socket.io server
+        socket.emit("updateLocation", {
+          location: {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          },
+          address: formattedAddress, // Send the formatted address to the server
+        });
+        // Return the details object
+        return {
+          description: formattedAddress,
+          place_id: data.results[0].place_id,
+          structured_formatting: {
+            main_text: formattedAddress,
+            secondary_text: "",
+          },
+          types: ["current_location"],
+          geometry: {
+            location: {
+              lat: location.coords.latitude,
+              lng: location.coords.longitude,
+            },
+          },
         };
+      } else {
+        console.error("Geocoding API request failed");
+        return null;
+      }
+      // Get the current location
+    } catch (error) {
+      console.error("Error sharing location:", error);
+      return null;
+    }
+  };
+
+  const activateShareLocationPuv = () => {
+    setActive(!active);
+
+    if (!active) {
+      // Log the time when starting the interval
+      console.log("Interval started at:", new Date());
+
+      // Set up an interval to call shareLocationPuv every 5000 milliseconds (5 seconds)
+      var interval = setInterval(shareLocationPuv, 2500);
+
+      // stop the interval after a certain time
+      setTimeout(() => {
+        clearInterval(interval);
+        toggleActive(false);
+        console.log("Active state:", active);
+        console.log("Interval stopped ats:", new Date());
+      }, 10000);
+    } else {
+      // Clear the interval immediately when the active is already true
+      clearInterval(interval);
+
+      console.log("Interval stopped at:", new Date());
+    }
+  };
+
+  const getDriverLocation1 = async () => {
+    setActive(!setDriverActive);
+    try {
+      onPlaceSelectedPuv(destination, "destination");
+      if (!setDriverActive === true) {
+        // Get the current location
+        // let location = await Location.getCurrentPositionAsync({});
+        // console.log("Location shared:", location);
+        // const current_position = {
+        //   latitude: location.coords.latitude,
+        //   longitude: location.coords.longitude,
+        // };
 
         // setActive(!active);
 
         console.log(active);
         window.alert(active);
-        onPlaceSelectedPuv(current_position, "origin");
-        // moveTo(current_position);
-        // Get the address from the coordinates using the Geocoding API
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
-        );
-
-        const data = await response.json();
-
-        if (data.status === "OK" && data.results.length > 0) {
-          // Extract the formatted address from the response
-          const formattedAddress = data.results[0].formatted_address;
-          // console.log("Formatted Address:", formattedAddress);
-
-          // Return the details object
-          return {
-            description: formattedAddress,
-            place_id: data.results[0].place_id,
-            structured_formatting: {
-              main_text: formattedAddress,
-              secondary_text: "",
-            },
-            types: ["current_location"],
-            geometry: {
-              location: {
-                lat: location.coords.latitude,
-                lng: location.coords.longitude,
-              },
-            },
-          };
-        } else {
-          console.error("Geocoding API request failed");
-          return null;
-        }
       }
     } catch (error) {
       console.error("Error sharing location:", error);
       return null;
     }
+  };
+
+  const getDriverLocation = () => {
+    try {
+      setDriverActive(!driverActive);
+      if (!driverActive) {
+        onPlaceSelectedPuvDriver(destination, "destination");
+        if (destination == null) {
+          console.log("No data available");
+        }
+      }
+    } catch (error) {}
   };
   // const activateLocationButtonInterval = () => {
   //   setActive(!active);
@@ -256,14 +351,7 @@ const GooglePlacesInput = () => {
   //     clearInterval();
   //   }
   // };
-  // setTimeout(() => {
-  //   condition = active;
 
-  //   // Stop running the function
-  //   activateLocationButtonInterval(condition);
-  // }, 10000);
-
-  const activateShareLocationPuv = () => {};
   const moveTo = async (position) => {
     const camera = await mapRef.current?.getCamera();
     if (camera) {
@@ -271,9 +359,7 @@ const GooglePlacesInput = () => {
       mapRef.current?.animateCamera(camera, { duration: 2000 });
     }
   };
-  const handleActivateLocation = () => {
-    activateLocationButtonInterval();
-  };
+
   const onPlaceSelected = (details, flag) => {
     const set = flag === "origin" ? setOrigin : setDestination;
 
@@ -313,6 +399,11 @@ const GooglePlacesInput = () => {
     moveTo(details);
     set(details);
   };
+  const onPlaceSelectedPuvDriver = (details, flag) => {
+    const set = flag === "origin" ? setOrigin : setDestination;
+
+    set(details);
+  };
   useEffect(() => {
     // Listen for location updates from the server
     socket.on("locationUpdate", (data) => {
@@ -320,6 +411,7 @@ const GooglePlacesInput = () => {
 
       // Update the locationUpdates state to trigger a re-render
       setLocationUpdates((prevUpdates) => [...prevUpdates, data]);
+      setDestination(data.location);
     });
 
     // Clean up the event listener when the component unmounts
@@ -456,6 +548,13 @@ const GooglePlacesInput = () => {
                     onPlaceSelected(details, "origin")
                   }
                 />
+                <TouchableOpacity
+                  onPress={() => {
+                    setOrigin(null);
+                  }}
+                >
+                  <Text> Remove Marker</Text>
+                </TouchableOpacity>
                 <InputAutocomplete
                   label="Destination"
                   placeholder={"Enter destination"}
@@ -479,7 +578,7 @@ const GooglePlacesInput = () => {
               <View>
                 <TouchableOpacity
                   style={styles.button}
-                  onPress={shareLocationPuv}
+                  onPress={activateShareLocationPuv}
                   activeOpacity={0.1}
                 >
                   <Icon
@@ -499,6 +598,21 @@ const GooglePlacesInput = () => {
                   }
                 />
                 <TouchableOpacity
+                  style={styles.button}
+                  onPress={getDriverLocation}
+                  activeOpacity={0.1}
+                >
+                  <Icon
+                    name="map-marker"
+                    type="font-awesome"
+                    color="white"
+                    size={30}
+                  />
+                  <Text>
+                    {driverActive ? "Deactivate" : "Activate"} Driver Location
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={styles.routeButton}
                   onPress={() => setShowDirections(!showDirections)}
                 >
@@ -511,8 +625,6 @@ const GooglePlacesInput = () => {
               </View>
             )}
           </View>
-
-          {/* <GooglePlacesInput /> */}
         </View>
       )}
       <View style={styles.buttonContainer}>
