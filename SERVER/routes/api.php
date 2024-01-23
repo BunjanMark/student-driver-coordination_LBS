@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RecoveryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,5 +55,7 @@ Route::post('/login', [UserController::class, 'loginUser']);
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
-Route::post('/share-location', [LocationController::class, 'shareLocation']);
-Route::get('/get-location', [LocationController::class, 'getLocation']);
+ 
+
+Route::post('/password/reset/request', [RecoveryController::class, 'requestPasswordReset']);
+Route::post('/password/reset', [RecoveryController::class, 'resetPassword']);

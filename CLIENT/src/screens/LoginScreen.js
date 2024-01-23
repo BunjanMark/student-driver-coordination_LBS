@@ -48,7 +48,7 @@ const LoginScreen = () => {
       }
 
       const url =
-        "https://41a4-2001-4455-62c-c800-7c4c-e35c-5c46-cdbd.ngrok-free.app/api/login";
+        "https://cb96-2001-4455-62c-c800-811e-dd0-504f-f1de.ngrok-free.app/api/login";
 
       const data = {
         email,
