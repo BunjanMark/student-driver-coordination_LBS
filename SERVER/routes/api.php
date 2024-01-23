@@ -5,7 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RecoveryController;
+use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 /*
 |--------------------------------------------------------------------------
 | API Routes

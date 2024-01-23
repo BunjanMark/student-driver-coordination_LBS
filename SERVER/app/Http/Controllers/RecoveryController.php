@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-
+ 
+use Illuminate\Support\Str;
 class RecoveryController extends Controller
 {
     /**
@@ -60,7 +61,6 @@ class RecoveryController extends Controller
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
                 'password' => 'required|string|min:3|confirmed',
-                'token' => 'required|string',
             ]);
 
             if ($validator->fails()) {
@@ -71,25 +71,30 @@ class RecoveryController extends Controller
                 ], 400);
             }
 
-            $status = Password::reset(
-                $request->only('email', 'password', 'password_confirmation', 'token'),
-                function ($user, $password) {
-                    $user->forceFill([
-                        'password' => Hash::make($password),
-                        'remember_token' => Str::random(60),
-                    ])->save();
-                }
-            );
+            // Get the user by email
+            $user = User::where('email', $request->email)->first();
 
-            return $status === Password::PASSWORD_RESET
-                ? response()->json([
-                    'status' => true,
-                    'message' => 'Password reset successfully',
-                ], 200)
-                : response()->json([
+            if (!$user) {
+                return response()->json([
                     'status' => false,
-                    'message' => 'Unable to reset password',
-                ], 500);
+                    'message' => 'User not found',
+                ], 404);
+            }
+
+            // Generate a new token
+            $token = Str::random(60);
+
+            // Save the new token and hashed password to the user
+            $user->forceFill([
+                'password' => Hash::make($request->password),
+                'remember_token' => $token,
+            ])->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Password reset successfully',
+                'token' => $token, // You can include the token in the response
+            ], 200);
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
@@ -97,4 +102,5 @@ class RecoveryController extends Controller
             ], 500);
         }
     }
+    
 }
