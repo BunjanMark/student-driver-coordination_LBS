@@ -145,7 +145,7 @@ const LoginScreen = () => {
                     navigator.navigate("AccountRecoveryScreen");
                   }}
                 >
-                  Recover
+                  Password Reset
                 </Button>
               </View>
             </SafeAreaView>

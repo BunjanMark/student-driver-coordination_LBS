@@ -20,7 +20,7 @@ class RecoveryController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
+                'email' => 'required|email|exists:users',
             ]);
 
             if ($validator->fails()) {
@@ -51,6 +51,7 @@ class RecoveryController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Reset user password.

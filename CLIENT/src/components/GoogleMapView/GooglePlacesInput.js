@@ -1,7 +1,5 @@
 import { View, Text, Button, Touchable } from "react-native";
-import {
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import React, { useState, useRef, useEffect } from "react";
 import { useDarkMode } from "../../components/context/DarkModeContext";
 import {
@@ -216,7 +214,7 @@ const GooglePlacesInput = () => {
       console.log("Interval started at:", new Date());
 
       // Set up an interval to call shareLocationPuv every 5000 milliseconds (5 seconds)
-      var interval = setInterval(shareLocationPuv, 2000);
+      var interval = setInterval(shareLocationPuv, 4000);
 
       // stop the interval after a certain time 30secs
       setTimeout(() => {
@@ -231,63 +229,6 @@ const GooglePlacesInput = () => {
 
       console.log("Interval stopped at:", new Date());
     }
-  };
-
-  // const activateGetLocationPuv = () => {
-  //   setDriverActive(!driverActive);
-
-  //   if (!driverActive) {
-  //     // Log the time when starting the interval
-  //     console.log("Interval started at:", new Date());
-
-  //     // Set up an interval to call shareLocationPuv every 5000 milliseconds (5 seconds)
-  //     var intervalDriver = setInterval(getDriverLocation, 5000);
-
-  //     // stop the interval after a certain time 30secs
-  //     setTimeout(() => {
-  //       clearInterval(intervalDriver);
-  //       toggleActive(false);
-  //       console.log("DriverActive state:", driverActive);
-  //       console.log("Interval stopped ats:", new Date());
-  //     }, 60000);
-  //   } else {
-  //     // Clear the interval immediately when the active is already true
-  //     clearInterval(intervalDriver);
-
-  //     console.log("Interval stopped at:", new Date());
-  //   }
-  // };
-  // const getDriverLocation = async () => {
-  //   setActive(!setDriverActive);
-  //   try {
-  //     onPlaceSelectedPuv(originDriver, "destination");
-  //     if (!setDriverActive === true) {
-  //       // Get the current location
-  //       // let location = await Location.getCurrentPositionAsync({});
-  //       // console.log("Location shared:", location);
-  //       // const current_position = {
-  //       //   latitude: location.coords.latitude,
-  //       //   longitude: location.coords.longitude,
-  //       // };
-
-  //       // setActive(!active);
-
-  //       console.log(active);
-  //       window.alert(active);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error sharing location:", error);
-  //     return null;
-  //   }
-  // };
-
-  const getDriverLocation = () => {
-    try {
-      onPlaceSelectedPuvDriver(originDriver, "originDriver");
-      if (originDriver == null) {
-        console.log("No data available: ", originDriver);
-      }
-    } catch (error) {}
   };
 
   const moveTo = async (position) => {
@@ -456,12 +397,17 @@ const GooglePlacesInput = () => {
         {origin && (
           <Marker
             coordinate={origin}
-            title="Invisible Marker"
-            description="This marker is invisible"
-            opacity={0} // Set opacity to 0 to make the marker invisible
+            title="Origin"
+            description="Your prefered starting point"
           />
         )}
-        {destination && <Marker coordinate={destination} />}
+        {destination && (
+          <Marker
+            coordinate={destination}
+            title="Destination"
+            description="Your prefered ending point"
+          />
+        )}
         {showDirections && origin && destination && (
           <MapViewDirections
             origin={origin}
@@ -518,6 +464,7 @@ const GooglePlacesInput = () => {
                 <TouchableOpacity
                   onPress={() => {
                     setOrigin(null);
+                    setDestination(null);
                   }}
                 >
                   <Text> Remove Marker</Text>
@@ -562,6 +509,14 @@ const GooglePlacesInput = () => {
                 <View>
                   <Text>Distance: {distance.toFixed(2)} km</Text>
                   <Text>Duration: {Math.ceil(duration)} min </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setOriginPassenger(null);
+                      setOriginDriver(null);
+                    }}
+                  >
+                    <Text>Clear markers</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             )}
@@ -576,7 +531,7 @@ const GooglePlacesInput = () => {
           activeOpacity={0.1}
         >
           <MaterialCommunityIcons
-            name={isSearchContainerRouteVisible ? "account" : "account-outline"}
+            name={isSearchContainerRouteVisible ? "close" : "account"}
             color="white"
             size={25}
           />
@@ -587,7 +542,7 @@ const GooglePlacesInput = () => {
           activeOpacity={0.1}
         >
           <MaterialCommunityIcons
-            name={isSearchContainerPuvVisible ? "account" : "account-outline"}
+            name={isSearchContainerPuvVisible ? "close" : "account"}
             color="white"
             size={25}
           />

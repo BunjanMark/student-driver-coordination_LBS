@@ -11,6 +11,7 @@ import LoginScreen from "./src/screens/LoginScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import Settings from "./src/screens/Settings";
 import About from "./src/screens/About";
+import AccountRecoveryRequestScreen from "./src/screens/AccountRecoveryRequestScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,11 @@ const App = () => {
           <Stack.Screen
             name="RegisterScreen"
             component={RegisterScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AccountRecoveryRequestScreen"
+            component={AccountRecoveryRequestScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
