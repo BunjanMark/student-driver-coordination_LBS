@@ -4,30 +4,49 @@ import { Button, PaperProvider, TextInput } from "react-native-paper";
 import { FormStyle } from "../../Styles/FormStyle";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-// import { validator } from "validator";
 import { StyleSheet } from "react-native";
-// import { useState } from "react";
+import { useState } from "react";
+
 const Email = () => {
   const navigator = useNavigation();
 
-  // const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState(""); 
+  const [emailError, setEmailError] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
 
-  // const [error, setError] = useState(null);
+  const validateEmail = (input) => {
+  setEmail(input);
 
-  // const validateEmail = (input) => {
-  //   setEmail(input);
+  if (!input) {
+  setError("Email is required.");
+   return;
+     }
 
-  //   if (!input) {
-  //     setError("Email is required.");
-  //     return;
-  //   }
+     if (input.includes('@')) {
+      setEmailError("");
+    } else {
+      setEmailError("Please enter a valid email address.");
+    }
+  };
 
-  //   if (validator.isEmail(input)) {
-  //     setError("");
-  //   } else {
-  //     setError("Please enter a valid email address.");
-  //   }
-  // };
+  const validatePassword = (input) => {
+    setPassword(input);
+
+    if (!input) {
+      setPasswordError("Password is required.");
+      return;
+    }
+
+    // Add your password validation logic here
+    // For example, you can check the length or complexity
+    // For simplicity, I'm using a basic check for minimum length
+    if (input.length >= 6) {
+      setPasswordError("");
+    } else {
+      setPasswordError("Password should be at least 6 characters.");
+    }
+  };
 
   return (
     <PaperProvider>
@@ -35,39 +54,31 @@ const Email = () => {
         <TextInput
           style={FormStyle.input_style}
           mode="outlined"
-          label="Phone number"
-          placeholder="Enter your mobile number"
-          inputMode="numeric"
+          label="Email"
+          placeholder="Enter your email"
+          onChangeText={validateEmail}
         />
-        {/* <View style={styles.container}>
-          <Text>Email:</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={validateEmail}
-              placeholder="Enter your email"
-            />
+        {emailError ? <Text style={styles.errorMessage}>{emailError}</Text> : null}
 
-            {error !== null &&
-              (error ? (
-                <Text style={styles.invalidMark}>✗</Text>
-              ) : (
-                <Text style={styles.validMark}>✓</Text>
-              ))}
-          </View>
+        <TextInput
+          style={FormStyle.input_style}
+          mode="outlined"
+          label="Enter your new password"
+          placeholder="Enter your new password"
+          secureTextEntry
+          onChangeText={validatePassword}
+        />
+        {passwordError ? <Text style={styles.errorMessage}>{passwordError}</Text> : null}
 
-          {error ? <Text style={styles.errorMessage}>{error}</Text> : null}
-        </View> */}
         <SafeAreaView>
           <Button
             mode="contained"
             style={{ width: 250 }}
             onPress={() => {
-              alert("Code sent");
+              alert("Ok!");
             }}
           >
-            Send code
+            Reset Password
           </Button>
           <Button
             onPress={() => {

@@ -5,16 +5,45 @@ import {
   StyleSheet,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Image,
+  TextInput,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import {FontAwesome} from "@expo/vector-icons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useDarkMode } from "../components/context/DarkModeContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ImagePicker from "expo-image-picker";
 
-const FixedHeader = ({ username }) => {
-  const { darkMode } = useDarkMode();
+const FixedHeader = () => {
+  const { darkMode, toggleDarkMode } = useDarkMode();
   const navigator = useNavigation();
   const isFocused = useIsFocused();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [editableUsername, setEditableUsername] = useState("");
+  const [profilePicture, setProfilePicture] = useState("");  
+  const [isEditingUsername, setIsEditingUsername] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem("username");
+        setEditableUsername(storedUsername || "User Name");
+
+        // Load the stored profile picture URI
+        const storedProfilePicture = await AsyncStorage.getItem(
+          "profilePicture"
+        );
+        if (storedProfilePicture) {
+          setProfilePicture(storedProfilePicture);
+        }
+      } catch (error) {
+        console.error("Error loading data from AsyncStorage:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -24,47 +53,133 @@ const FixedHeader = ({ username }) => {
     setSidebarOpen(false);
   };
 
-  useEffect(() => {
-    if (!isFocused) {
-      setSidebarOpen(false);
+  const handleEditProfilePicture = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        const selectedImage = result.assets[0];
+        setProfilePicture(selectedImage.uri);
+
+        // Save the selected profile picture URI to AsyncStorage
+        await AsyncStorage.setItem("profilePicture", selectedImage.uri);
+
+        const formData = new FormData();
+        formData.append("profilePicture", {
+          uri: selectedImage.uri,
+          type: selectedImage.type || "image/jpeg", // Adjust the type based on your server requirements
+          name: "profilePicture.jpg",
+        });
+
+        // Replace 'https://your-api-endpoint/uploadProfilePicture' with your actual API endpoint
+        const response = await fetch(
+          "http://192.168.254.110:8000/uploadProfilePicture",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: "Bearer YOUR_ACCESS_TOKEN", // Add your authorization token if required
+              "Custom-Header": "Custom-Value", // Add any custom headers as needed
+            },
+          }
+        );
+
+        const data = await response.json();
+        console.log("Image uploaded successfully:", data);
+      } else {
+        console.warn("Image selection canceled by user.");
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
+      // Add user-friendly error handling or display an error message to the user
     }
-  }, [isFocused]);
+  };
+
+  const handleUsernameChange = (newUsername) =>
+  setEditableUsername(newUsername);
+
+  const handleEditUsername = async () => {
+    try {
+      const storedUsername = await AsyncStorage.getItem("username");
+      setEditableUsername(storedUsername || "User Name");
+      setIsEditingUsername(true);
+    } catch (error) {
+      console.error("Error loading username from AsyncStorage:", error);
+    }
+  };
+
+  const handleSaveUsername = async () => {
+    try {
+      setIsEditingUsername(false);
+      await AsyncStorage.setItem("username", editableUsername);
+    } catch (error) {
+      console.error("Error saving username to AsyncStorage:", error);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={closeSidebar}>
       <View style={[styles.container]}>
-        {isSidebarOpen && isFocused && (
-          <View style={[styles.sidebar, darkMode && styles.darkSidebar]}>
-            {/* Display user's name in the sidebar */}
-            <Text
-              style={[styles.sidebarText, darkMode && styles.darkSidebarText]}
-            >
-              {username}
-            </Text>
-            <TouchableOpacity
-              style={styles.sidebarItem}
-              onPress={() => {
-                navigator.navigate("HomeScreen");
-              }}
-            >
-              <Icon
-                name="home"
-                size={20}
-                color={darkMode ? "black" : "white"}
-              />
-              <Text
-                style={[styles.sidebarText, darkMode && styles.darkSidebarText]}
-              >
-                Home
-              </Text>
-            </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.sidebarButton, darkMode && styles.darkSidebarButton]}
+        onPress={toggleSidebar}
+      >
+        <Icon name="menu" size={25} color={darkMode ? "white" : "black"} />
+      </TouchableOpacity>
 
+        {isSidebarOpen && isFocused && (
+          <View style={[styles.sidebar, darkMode && styles.darkSidebar]}>          
+         {/* Display profile picture and username in sidebar */}
+         <View style={styles.userProfile}>
+        <View style={styles.userAvatar}>
+          {/* Use a placeholder image if the profile picture is not available */}
+          <Image
+            source={
+              profilePicture
+                ? { uri: profilePicture }
+                : require("../images/placeholder.png")
+            }
+            style={styles.avatarImage}
+          />
+        </View>
+       
+        <View style={styles.userInfo}>
+          <View
+            style={[
+              styles.usernameContainer,
+              { justifyContent: "space-between" },
+            ]}
+          >
+            {isEditingUsername ? (
+              <TextInput
+                style={[
+                  styles.editableUsername,
+                  darkMode && styles.darkEditableUsername,
+                ]}
+                value={editableUsername}
+                onChangeText={handleUsernameChange}
+              />
+            ) : (
+              <Text style={[styles.userName, darkMode && styles.darkUserName]}>
+                {editableUsername}
+              </Text>
+            )}
+          </View>
+          </View>         
+                
             <TouchableOpacity
               style={styles.sidebarItem}
               onPress={() => {
                 navigator.navigate("About");
               }}
             >
+
               <Icon
                 name="information-circle"
                 size={20}
@@ -76,6 +191,7 @@ const FixedHeader = ({ username }) => {
                 About
               </Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.sidebarItem}
               onPress={() => {
@@ -93,87 +209,136 @@ const FixedHeader = ({ username }) => {
                 Settings
               </Text>
             </TouchableOpacity>
-          </View>
-        )}
-        <TouchableOpacity
-          style={[styles.sidebarButton, darkMode && styles.darkSidebarButton]}
-          onPress={toggleSidebar}
-        >
-          <Icon name="menu" size={25} color={darkMode ? "white" : "black"} />
-        </TouchableOpacity>
-      </View>
-    </TouchableWithoutFeedback>
-  );
+
+            <TouchableOpacity
+              style={styles.sidebarItem}
+              onPress={() => toggleDarkMode(!darkMode)}
+            >
+              <Icon
+                name="moon"
+                size={20}
+                color={darkMode ? "black" : "white"}
+              />
+              <Text
+                style={[styles.sidebarText, darkMode && styles.darkSidebarText]}
+              >
+                Dark Mode
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity               
+            style={styles.sidebarItem}
+            onPress={() => navigator.navigate("LoginScreen")}>
+        
+          <FontAwesome
+            name="sign-out"
+            size={24}
+            color={darkMode ? "black" : "white"}
+          />
+           <Text
+                style={[styles.logoutText, darkMode && styles.darklogoutText]}
+              >
+                Logout
+              </Text>
+            </TouchableOpacity>
+          </View>    
+        </View>
+      )}
+    </View>
+  </TouchableWithoutFeedback>
+ );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: "relative",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderColor: "black",
-    borderWidth: 3,
-    padding: 1,
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-  },
-  darkHeader: {
-    backgroundColor: "#575757", // Dark mode background color
-    borderColor: "#76737e", // Dark mode border color
   },
   sidebarButton: {
     position: "absolute",
-    top: 10, // Adjust the top position as needed
-    left: 10, // Adjust the left position as needed
+    top: 20, 
+    left: 10, 
     padding: 15,
-    zIndex: 2, // Make sure the sidebar button is above the sidebar
-  },
-  darkSidebarButton: {
-    backgroundColor: "#575757", // Dark mode background color
+    zIndex: 2, 
   },
   sidebar: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    top: 60,
-    left: -5,
-    padding: 5,
-    zIndex: 1,
-    borderBottomRightRadius: 30,
-    backgroundColor: "#575757",
-    width: "40%",
-    height: 300,
-    gap: 50,
+    padding: 50,
+    borderBottomRightRadius: 10,
+    backgroundColor: "#294B29",
+    width: "78%", 
+    height: 900, 
   },
   darkSidebar: {
-    backgroundColor: "#908d96", // Dark mode background color
-    borderColor: "black", // Dark mode border color
+    backgroundColor: "#908d96", 
   },
   sidebarItem: {
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 7,
-    borderColor: "transparent",
-    marginLeft: -20,
+    top: 25,
   },
   sidebarText: {
     color: "white",
-    marginLeft: 10,
-    fontSize: 18,
+    marginLeft: -5,
+    fontSize: 20,
     fontWeight: "bold",
+    marginVertical: 10,
+    padding: 25,
   },
   darkSidebarText: {
-    color: "black", // Dark mode text color
+    color: "black", 
     fontWeight: "bold",
+  },
+  logoutText: {
+    color: "white",
+    marginLeft: -5,
+    fontSize: 20,
+    fontWeight: "bold",
+    padding: 25,
+  },
+  darklogoutText: {
+    color: "black", 
+    fontWeight: "bold",
+  },
+  userProfile: {
+    zIndex: 1,
+    position: "relative",
+    top: "1%",
+    left: "-8%", 
+    padding: 20,
+    borderRadius: 10,
+  },
+  userAvatar: {
+    position: "relative",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow: "hidden",
+    borderWidth: 3,
+    borderColor: "#fff",
+  },
+  avatarImage: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+  },
+  userInfo: {
+    marginTop: 170,
+    alignItems: "center",
+    marginLeft: 180,
+    position: "absolute",
+  },
+  usernameContainer: {
+    alignItems: "center",
+    position: "absolute",
+    bottom: 50,
+  },
+  userName: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#fff",
+    fontStyle: "italic",
+  },
+  darkUserName: {
+    color: "black", 
   },
 });
 

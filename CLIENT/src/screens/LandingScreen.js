@@ -38,13 +38,13 @@ const LandingScreen = () => {
             fontWeight: "bold",
           }}
         >
-          HotSpot
+          HopSpot
         </Text>
         <SafeAreaView style={styles.buttonContainer}>
           <Button
             mode="contained"
             onPress={() => {
-              navigator.navigate("LoginScreen");
+              navigator.navigate("HomeScreen");
             }}
             style={{
               backgroundColor: "black",
@@ -58,7 +58,7 @@ const LandingScreen = () => {
             }}
             icon={"arrow-right"}
           >
-            Start to Join
+            Start To Join
           </Button>
         </SafeAreaView>
       </SafeAreaView>

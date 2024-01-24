@@ -66,22 +66,6 @@ const AccountRecoveryScreen = () => {
             </Text>
 
             <Email />
-
-            {error && (
-              <Text style={{ color: "red", marginVertical: 10 }}>{error}</Text>
-            )}
-            <Button
-              mode="contained"
-              style={{ marginTop: 10 }}
-              onPress={() => handleRecovery("user@example.com")}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                "Recover Account"
-              )}
-            </Button>
           </KeyboardAvoidingView>
         </SafeAreaView>
       </ImageBackground>
