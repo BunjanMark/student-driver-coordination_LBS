@@ -44,7 +44,7 @@ const LandingScreen = () => {
           <Button
             mode="contained"
             onPress={() => {
-              navigator.navigate("HomeScreen");
+              navigator.navigate("LoginScreen");
             }}
             style={{
               backgroundColor: "black",

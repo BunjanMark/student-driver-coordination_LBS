@@ -53,7 +53,7 @@ const RegisterScreen = () => {
       }
 
       const url =
-        "https://389b-2001-4455-62c-c800-549d-68f4-c3fc-9dce.ngrok-free.app/api/register";
+        "https://c292-2001-4455-62c-c800-478-e4fb-7367-cf00.ngrok-free.app/api/register";
 
       const data = {
         name,
@@ -78,7 +78,7 @@ const RegisterScreen = () => {
 
   const currentLogoWidth = 50;
   const currentLogoHeight = 50;
-  const newSizeMultiplier = 2; 
+  const newSizeMultiplier = 2;
 
   const newLogoWidth = currentLogoWidth * newSizeMultiplier;
   const newLogoHeight = currentLogoHeight * newSizeMultiplier;
@@ -196,7 +196,10 @@ const RegisterScreen = () => {
               Login Now
             </Button>
           </SafeAreaView>
-          <Button mode="text" onPress={() => navigator.navigate("LandingScreen")}>
+          <Button
+            mode="text"
+            onPress={() => navigator.navigate("LandingScreen")}
+          >
             Go Back
           </Button>
         </KeyboardAvoidingView>
