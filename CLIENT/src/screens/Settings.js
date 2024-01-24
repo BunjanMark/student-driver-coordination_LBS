@@ -104,8 +104,6 @@ const Settings = () => {
   };
 
   const handleSaveChanges = () => {
-    saveSettingsState("userEmail", email);
-    saveSettingsState("username", username);
     saveSettingsState("password", password);
     setEditMode(false);
   };
@@ -188,7 +186,7 @@ const Settings = () => {
                 darkMode && styles.darkEditAccountDetailsText,
               ]}
             >
-              {editMode ? "CANCEL EDIT" : "EDIT ACCOUNT"}
+              {editMode ? "CANCEL EDIT" : "EDIT PASSWORD"}
             </Text>
           </View>
         </TouchableOpacity>
@@ -196,26 +194,6 @@ const Settings = () => {
 
       {editMode && (
         <>
-          <Text style={[styles.subHeading, darkMode && styles.darkSubHeading]}>
-            Edit Email
-          </Text>
-          <TextInput
-            style={[styles.input, darkMode && styles.darkInput]}
-            value={email}
-            onChangeText={setUserEmail}
-            placeholder="Enter your email"
-          />
-
-          <Text style={[styles.subHeading, darkMode && styles.darkSubHeading]}>
-            Edit Username
-          </Text>
-          <TextInput
-            style={[styles.input, darkMode && styles.darkInput]}
-            value={username}
-            onChangeText={setUsername}
-            placeholder="Enter your username"
-          />
-
           <Text style={[styles.subHeading, darkMode && styles.darkSubHeading]}>
             Change Password
           </Text>

@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import {
   View,
-  SafeAreaView,
   Text,
   FlatList,
   StyleSheet,
   TextInput,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
-import SidebarMenu from "../components/SidebarMenu";
 import io from "socket.io-client";
 import { useDarkMode } from "../components/context/DarkModeContext";
+import { Feather } from "@expo/vector-icons"; 
 
 const socket = io("wss://websocket-server-hopspot.glitch.me/");
 
@@ -19,6 +19,7 @@ const History = () => {
   const { darkMode } = useDarkMode();
   const [locationUpdates, setLocationUpdates] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     loadLocationHistory();
@@ -38,14 +39,21 @@ const History = () => {
 
   const handleLocationUpdate = async (locationUpdate) => {
     try {
+      // Extract relevant details from the locationUpdate
+      const { deviceNumber, distance, duration, timestamp } = locationUpdate;
+  
       // Save the location update to history in SecureStore
       await SecureStore.setItemAsync(
         "locationHistory",
-        JSON.stringify([...locationUpdates, locationUpdate])
+        JSON.stringify([...locationUpdates, { deviceNumber, distance, duration, timestamp }])
       );
-
+  
       // Update state to reflect the new location update
-      setLocationUpdates((prevUpdates) => [...prevUpdates, locationUpdate]);
+      setLocationUpdates((prevUpdates) => [
+        ...prevUpdates,
+        { deviceNumber, distance, duration, timestamp },
+      ]);
+  
     } catch (error) {
       console.error("Error saving location update to history:", error);
     }
@@ -73,6 +81,42 @@ const History = () => {
     );
   });
 
+  const renderItem = ({ item }) => {
+    const distance = item.distance !== undefined ? item.distance.toFixed(2) : "N/A";
+    const duration = item.duration !== undefined ? Math.ceil(item.duration) : "N/A"; 
+    const origin = item.origin ? JSON.stringify(item.origin) : "N/A";
+    const destination = item.destination ? JSON.stringify(item.destination) : "N/A";
+  return (
+      <View
+        style={[styles.historyItem, darkMode && styles.darkHistoryItem]}
+      >
+         <Text style={{ color: darkMode ? "white" : "black" }}>
+            Distance: {distance} km
+          </Text>
+          <Text style={{ color: darkMode ? "white" : "black" }}>
+            Duration: {duration} min
+          </Text>
+          <Text style={{ color: darkMode ? "white" : "black" }}>
+            Origin: {origin}
+          </Text>
+          <Text style={{ color: darkMode ? "white" : "black" }}>
+            Destination: {destination}
+          </Text>
+          <Text style={{ color: darkMode ? "white" : "black" }}>
+            Timestamp: {new Date(item.timestamp).toLocaleString()}
+          </Text>
+      </View>
+    );
+  };
+
+  const handleSearch = () => {
+    const results = locationUpdates.filter((result) =>
+      result.address && result.address.toLowerCase().includes(searchText.toLowerCase())
+    );
+    setSearchResults(results);
+  };
+
+
   return (
     <View
       style={[
@@ -92,32 +136,22 @@ const History = () => {
         <Text style={[styles.maintext, darkMode && styles.darkMaintext]}>
           LOCATION HISTORY
         </Text>
-        <TextInput
-          style={[styles.searchInput, darkMode && styles.darkSearchInput]}
-          placeholder="Search..."
-          placeholderTextColor={darkMode ? "black" : "white"}
-          value={searchQuery}
-          onChangeText={(text) => setSearchQuery(text)}
-        />
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={[styles.searchInput, darkMode && styles.darkSearchInput]}
+            placeholder="Search..."
+            placeholderTextColor={darkMode ? "black" : "white"}
+            value={searchQuery}
+            onChangeText={(text) => setSearchQuery(text)}
+          />
+          <TouchableOpacity onPress={handleSearch} style={styles.searchIcon}>
+            <Feather name="search" size={24} color={darkMode ? "white" : "black"} />
+          </TouchableOpacity>
+        </View>
         <FlatList
           data={filteredLocationUpdates}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => {
-            const locationString = JSON.stringify(item.location);
-            const address = item.address || "Address not available";
-            return (
-              <View
-                style={[styles.historyItem, darkMode && styles.darkHistoryItem]}
-              >
-                <Text style={{ color: darkMode ? "white" : "black" }}>
-                  Device {item.deviceNumber}: {locationString}
-                </Text>
-                <Text style={{ color: darkMode ? "white" : "black" }}>
-                  Address: {address}
-                </Text>
-              </View>
-            );
-          }}
+          renderItem={renderItem}
         />
       </View>
     </View>
@@ -164,6 +198,31 @@ const styles = StyleSheet.create({
   },
   darkHistoryItem: {
     backgroundColor: "rgba(0, 0, 0, 0.7)",
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+    borderColor: "white",
+    borderWidth: 3,
+    paddingLeft: 10,
+    color: "white",
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
+  darkSearchInput: {
+    color: "black",
+    borderColor: "black",
+  },
+  searchIcon: {
+    backgroundColor: "white",
+    padding: 8,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
   },
 });
 

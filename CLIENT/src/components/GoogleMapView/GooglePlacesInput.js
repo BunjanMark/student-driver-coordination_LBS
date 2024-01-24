@@ -1,6 +1,5 @@
 import { View, Text, Button, Touchable } from "react-native";
 import {
-  SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import React, { useState, useRef, useEffect } from "react";
@@ -420,7 +419,7 @@ const GooglePlacesInput = () => {
   );
 
   return (
-    <SafeAreaView
+    <View
       style={{
         backgroundColor: darkMode ? "#575757" : "white",
       }}
@@ -579,7 +578,7 @@ const GooglePlacesInput = () => {
           <MaterialCommunityIcons
             name={isSearchContainerRouteVisible ? "account" : "account-outline"}
             color="white"
-            size={30}
+            size={25}
           />
         </TouchableOpacity>
         <TouchableOpacity
@@ -590,11 +589,11 @@ const GooglePlacesInput = () => {
           <MaterialCommunityIcons
             name={isSearchContainerPuvVisible ? "account" : "account-outline"}
             color="white"
-            size={30}
+            size={25}
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleLayerPress}>
-          <MaterialCommunityIcons name="layers" color="white" size={30} />
+          <MaterialCommunityIcons name="layers" color="white" size={25} />
           <LayerMenu
             visible={layerMenuVisible}
             onRequestClose={handleLayerPress}
@@ -607,7 +606,7 @@ const GooglePlacesInput = () => {
           showsHorizontalScrollIndicator={false}
         ></ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -635,14 +634,15 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "103%",
+    height: "100%",
   },
 
   button: {
     width: "100%",
     backgroundColor: "green",
-    borderRadius: 20,
+    borderRadius: 30,
     padding: 10,
+    marginBottom: 10,
   },
   layerOption: {
     backgroundColor: "green",
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     position: "absolute",
     right: 15,
-    bottom: 90,
+    bottom: 70,
     flexDirection: "column",
     zIndex: 4,
   },

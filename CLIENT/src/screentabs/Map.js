@@ -1,13 +1,23 @@
 import { View, Text, Button, StyleSheet } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import {SafeAreaView,useSafeAreaInsets,} from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import SidebarMenu from "../components/SidebarMenu";
-
+import MapView from "react-native-maps";
 import { useDarkMode } from "../components/context/DarkModeContext";
 import GooglePlacesInput from "../components/GoogleMapView/GooglePlacesInput";
-
-
+import Constants from "expo-constants";
+// import GooglePlacesInput from "../components/GoogleMapView/GooglePlacesInput";
+import MapViewDirections from "react-native-maps-directions";
+import { useState, useRef } from "react";
+import GOOGLE_API_KEY from "../services/GoogleApiKey";
+import {
+  GooglePlacesAutocomplete,
+  GooglePlaceDetail,
+} from "react-native-google-places-autocomplete";
 
 // const moveTo = async (position) => {
 //   const camera = await mapRef.current?.getCamera();
@@ -60,8 +70,6 @@ import GooglePlacesInput from "../components/GoogleMapView/GooglePlacesInput";
 //     </View>
 //   );
 // };
-
-
 // const onPlaceSelected = (details, flag) => {
 //   const set = flag === "origin" ? setOrigin : setDestination;
 //   const position = {
@@ -76,14 +84,12 @@ const Map = () => {
   const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView
+    <View
       style={{
-      
+        flex: 1,
         backgroundColor: darkMode ? "#575757" : "white",
       }}
     >
-     
-      {/* <SidebarMenu /> */}
       {/* <View
         style={{
           position: "absolute",
@@ -113,7 +119,7 @@ const Map = () => {
       >
         <Text style={{ color: darkMode ? "white" : "black" }}></Text>
       </View> */}
-    </SafeAreaView>
+    </View>
   );
 };
 
