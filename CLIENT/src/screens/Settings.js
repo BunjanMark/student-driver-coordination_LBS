@@ -123,10 +123,10 @@ const Settings = () => {
 
   return (
     <SafeAreaView style={[styles.container, darkMode && styles.darkContainer]}>
-      <Image
+      {/* <Image
         source={require("../images/bg.png")}
         style={styles.backgroundImage}
-      />
+      /> */}
 
       <View style={styles.header}>
         <TouchableOpacity
@@ -134,7 +134,11 @@ const Settings = () => {
           style={styles.backButtonContainer}
         >
           <Text>
-            <Icon name="ios-arrow-back" size={24} color="black" />
+            <Icon
+              name="ios-arrow-back"
+              size={24}
+              color={darkMode ? "white" : "black"} // Set the color dynamically based on darkMode
+            />
           </Text>
         </TouchableOpacity>
         <Text style={[styles.heading, darkMode && styles.darkHeading]}>
@@ -283,7 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white", // Light mode background color
   },
   darkContainer: {
-    backgroundColor: "#575757", // Dark mode background color
+    backgroundColor: "black", // Dark mode background color
   },
   backgroundImage: {
     ...StyleSheet.absoluteFillObject,
@@ -378,14 +382,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   logoutButton: {
-    backgroundColor: "black",
+    backgroundColor: "green",
     paddingVertical: 15,
     alignItems: "center",
     borderRadius: 8,
     margin: 20,
   },
   darkLogoutButton: {
-    backgroundColor: "darkred", // Dark mode background color
+    backgroundColor: "darkgreen", // Dark mode background color
   },
   logoutButtonText: {
     color: "white",

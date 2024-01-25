@@ -106,7 +106,7 @@ const AccountRecoveryScreen = () => {
             <Text
               variant="headlineLarge"
               style={{
-                marginTop: 320,
+                top: -50,
                 fontWeight: "bold",
                 fontSize: widthPercentageToDP("8%"),
               }}
@@ -170,7 +170,7 @@ const AccountRecoveryScreen = () => {
                 navigator.goBack();
               }}
             >
-              Go back
+              Go Back
             </Button>
           </KeyboardAvoidingView>
         </SafeAreaView>

@@ -9,7 +9,7 @@ import {
   TextInput,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import {FontAwesome} from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useDarkMode } from "../components/context/DarkModeContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -21,7 +21,7 @@ const FixedHeader = () => {
   const isFocused = useIsFocused();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [editableUsername, setEditableUsername] = useState("");
-  const [profilePicture, setProfilePicture] = useState("");  
+  const [profilePicture, setProfilePicture] = useState("");
   const [isEditingUsername, setIsEditingUsername] = useState(false);
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const FixedHeader = () => {
   };
 
   const handleUsernameChange = (newUsername) =>
-  setEditableUsername(newUsername);
+    setEditableUsername(newUsername);
 
   const handleEditUsername = async () => {
     try {
@@ -126,127 +126,115 @@ const FixedHeader = () => {
   return (
     <TouchableWithoutFeedback onPress={closeSidebar}>
       <View style={[styles.container]}>
-      <TouchableOpacity
-        style={[styles.sidebarButton, darkMode && styles.darkSidebarButton]}
-        onPress={toggleSidebar}
-      >
-        <Icon name="menu" size={25} color={darkMode ? "white" : "black"} />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.sidebarButton,
+            { backgroundColor: darkMode ? "transparent" : "transparent" }, // Set background color to transparent for both dark and light modes
+          ]}
+          onPress={toggleSidebar}
+        >
+          <Icon name="menu" size={25} color="white" />
+        </TouchableOpacity>
 
         {isSidebarOpen && isFocused && (
-          <View style={[styles.sidebar, darkMode && styles.darkSidebar]}>          
-         {/* Display profile picture and username in sidebar */}
-         <View style={styles.userProfile}>
-        <View style={styles.userAvatar}>
-          {/* Use a placeholder image if the profile picture is not available */}
-          <Image
-            source={
-              profilePicture
-                ? { uri: profilePicture }
-                : require("../images/placeholder.png")
-            }
-            style={styles.avatarImage}
-          />
-        </View>
-       
-        <View style={styles.userInfo}>
-          <View
-            style={[
-              styles.usernameContainer,
-              { justifyContent: "space-between" },
-            ]}
-          >
-            {isEditingUsername ? (
-              <TextInput
-                style={[
-                  styles.editableUsername,
-                  darkMode && styles.darkEditableUsername,
-                ]}
-                value={editableUsername}
-                onChangeText={handleUsernameChange}
-              />
-            ) : (
-              <Text style={[styles.userName, darkMode && styles.darkUserName]}>
-                {editableUsername}
-              </Text>
-            )}
+          <View style={[styles.sidebar, darkMode && styles.darkSidebar]}>
+            {/* Display profile picture and username in sidebar */}
+            <View style={styles.userProfile}>
+              <View style={styles.userAvatar}>
+                {/* Use a placeholder image if the profile picture is not available */}
+                <Image
+                  source={
+                    profilePicture
+                      ? { uri: profilePicture }
+                      : require("../images/placeholder.png")
+                  }
+                  style={styles.avatarImage}
+                />
+              </View>
+
+              <View style={styles.userInfo}>
+                <View
+                  style={[
+                    styles.usernameContainer,
+                    { justifyContent: "space-between" },
+                  ]}
+                >
+                  {isEditingUsername ? (
+                    <TextInput
+                      style={[
+                        styles.editableUsername,
+                        darkMode && styles.darkEditableUsername,
+                      ]}
+                      value={editableUsername}
+                      onChangeText={handleUsernameChange}
+                    />
+                  ) : (
+                    <Text
+                      style={[styles.userName, darkMode && styles.darkUserName]}
+                    >
+                      {editableUsername}
+                    </Text>
+                  )}
+                </View>
+              </View>
+
+              <TouchableOpacity
+                style={styles.sidebarItem}
+                onPress={() => {
+                  navigator.navigate("About");
+                }}
+              >
+                <Icon
+                  name="information-circle"
+                  size={20}
+                  color="white" // Always set the color to white
+                />
+                <Text style={[styles.sidebarText]}>About</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.sidebarItem}
+                onPress={() => {
+                  navigator.navigate("Settings");
+                }}
+              >
+                <Icon
+                  name="settings"
+                  size={20}
+                  color="white" // Always set the color to white
+                />
+                <Text style={[styles.sidebarText]}>Settings</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.sidebarItem}
+                onPress={() => toggleDarkMode(!darkMode)}
+              >
+                <Icon
+                  name="moon"
+                  size={20}
+                  color="white" // Always set the color to white
+                />
+                <Text style={[styles.sidebarText]}>Dark Mode</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.sidebarItem}
+                onPress={() => navigator.navigate("LoginScreen")}
+              >
+                <FontAwesome
+                  name="sign-out"
+                  size={24}
+                  color="white" // Always set the color to white
+                />
+                <Text style={[styles.logoutText]}>Logout</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          </View>         
-                
-            <TouchableOpacity
-              style={styles.sidebarItem}
-              onPress={() => {
-                navigator.navigate("About");
-              }}
-            >
-
-              <Icon
-                name="information-circle"
-                size={20}
-                color={darkMode ? "black" : "white"}
-              />
-              <Text
-                style={[styles.sidebarText, darkMode && styles.darkSidebarText]}
-              >
-                About
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.sidebarItem}
-              onPress={() => {
-                navigator.navigate("Settings");
-              }}
-            >
-              <Icon
-                name="settings"
-                size={20}
-                color={darkMode ? "black" : "white"}
-              />
-              <Text
-                style={[styles.sidebarText, darkMode && styles.darkSidebarText]}
-              >
-                Settings
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.sidebarItem}
-              onPress={() => toggleDarkMode(!darkMode)}
-            >
-              <Icon
-                name="moon"
-                size={20}
-                color={darkMode ? "black" : "white"}
-              />
-              <Text
-                style={[styles.sidebarText, darkMode && styles.darkSidebarText]}
-              >
-                Dark Mode
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity               
-            style={styles.sidebarItem}
-            onPress={() => navigator.navigate("LoginScreen")}>
-        
-          <FontAwesome
-            name="sign-out"
-            size={24}
-            color={darkMode ? "black" : "white"}
-          />
-           <Text
-                style={[styles.logoutText, darkMode && styles.darklogoutText]}
-              >
-                Logout
-              </Text>
-            </TouchableOpacity>
-          </View>    
-        </View>
-      )}
-    </View>
-  </TouchableWithoutFeedback>
- );
+        )}
+      </View>
+    </TouchableWithoutFeedback>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -255,20 +243,20 @@ const styles = StyleSheet.create({
   },
   sidebarButton: {
     position: "absolute",
-    top: 20, 
-    left: 10, 
+    top: 20,
+    left: 10,
     padding: 15,
-    zIndex: 2, 
+    zIndex: 2,
   },
   sidebar: {
     padding: 50,
     borderBottomRightRadius: 10,
-    backgroundColor: "#294B29",
-    width: "78%", 
-    height: 900, 
+    backgroundColor: "green",
+    width: "78%",
+    height: 900,
   },
   darkSidebar: {
-    backgroundColor: "#908d96", 
+    backgroundColor: "#002408",
   },
   sidebarItem: {
     flexDirection: "row",
@@ -284,7 +272,7 @@ const styles = StyleSheet.create({
     padding: 25,
   },
   darkSidebarText: {
-    color: "black", 
+    color: "black",
     fontWeight: "bold",
   },
   logoutText: {
@@ -295,14 +283,14 @@ const styles = StyleSheet.create({
     padding: 25,
   },
   darklogoutText: {
-    color: "black", 
+    color: "black",
     fontWeight: "bold",
   },
   userProfile: {
     zIndex: 1,
     position: "relative",
     top: "1%",
-    left: "-8%", 
+    left: "-8%",
     padding: 20,
     borderRadius: 10,
   },
@@ -338,7 +326,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   darkUserName: {
-    color: "black", 
+    color: "white",
   },
 });
 

@@ -125,7 +125,7 @@ const Profile = () => {
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: darkMode ? "#575757" : "white" },
+        { backgroundColor: darkMode ? "black" : "white" },
       ]}
     >
       <Image
@@ -183,7 +183,7 @@ const Profile = () => {
                   isEditingUsername ? "content-save-edit-outline" : "pencil"
                 }
                 size={24}
-                color=""
+                color={darkMode ? "white" : "black"}
               />
             </TouchableOpacity>
           </View>
@@ -201,7 +201,7 @@ const Profile = () => {
                 text: " Settings     ",
               },
               {
-                onPress:() => navigator.navigate("Map"),
+                onPress: () => navigator.navigate("Map"),
                 iconName: "map-marker",
                 text: " Location     ",
               },
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   },
   userProfile: {
     alignItems: "center",
-    marginTop: 260,
+    marginTop: 210,
     zIndex: 1,
     position: "absolute",
     top: "1%",
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   darkUserName: {
-    color: "white", // Dark mode text color
+    color: "black", // Dark mode text color
   },
   editableUsername: {
     fontSize: 20,
