@@ -16,10 +16,10 @@ import { Icon } from "react-native-elements";
 import * as Location from "expo-location";
 import MapView, { Marker } from "react-native-maps";
 import io from "socket.io-client";
-import { Modal } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { PROVIDER_GOOGLE } from "react-native-maps";
 import SidebarMenu from "../SidebarMenu";
+import useStore from "../../store";
 
 // import { Platform } from "react-native";
 // import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
@@ -61,14 +61,16 @@ const InputAutocomplete = ({ label, placeholder, onPlaceSelected }) => {
 
 const GooglePlacesInput = () => {
   const [location, setLocation] = useState(null);
-  const [locationUpdates, setLocationUpdates] = useState([]);
-  const [userAddress, setUserAddress] = useState("");
-  const [selectedLayer, setSelectedLayer] = useState("Terrain");
+  const { locationUpdates } = useStore();
+  const { setLocationUpdates, setSelectedOrigin, setSelectedDestination } = useStore();
 
+  const [userAddress, setUserAddress] = useState("");
+  const [showTrafficLayer, setShowTrafficLayer] = useState(false);
   const [layerMenuVisible, setLayerMenuVisible] = useState(false);
   const { darkMode } = useDarkMode();
   const insets = useSafeAreaInsets();
   const [origin, setOrigin] = useState(null);
+  const [tracedRoutes, setTracedRoutes] = useState([]);
 
   const [destination, setDestination] = useState(null);
   const [originPassenger, setOriginPassenger] = useState(null);
@@ -123,115 +125,98 @@ const GooglePlacesInput = () => {
   };
 
   const shareLocationPuv = async () => {
-    try {
-      let location = await Location.getCurrentPositionAsync({});
-      console.log("Location shared:", location);
-      const current_position = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
+  try {
+    let location = await Location.getCurrentPositionAsync({});
+    console.log("Location shared:", location);
+    const current_position = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
 
-      // setActive(!active);
+    onPlaceSelectedPuv(current_position, "originPassenger");
 
-      console.log(active);
+    // Get the address from the coordinates using the Geocoding API
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
+    );
 
-      // window.alert(active);
-      onPlaceSelectedPuv(current_position, "originPassenger");
+    const data = await response.json();
 
-      // moveTo(current_position);
-      // Get the address from the coordinates using the Geocoding API
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${location.coords.latitude},${location.coords.longitude}&key=${GOOGLE_API_KEY}`
-      );
-
+    if (response.status === 200) {
       const data = await response.json();
+    // Extract the formatted address from the response
+      const formattedAddress = data.results[0].formatted_address;
+      console.log("Formatted Address:", formattedAddress);
 
-      if (data.status === "OK" && data.results.length > 0) {
-        // Extract the formatted address from the response
-        const formattedAddress = data.results[0].formatted_address;
-        console.log("Formatted Address:", formattedAddress);
-        if (Platform.OS === "ios") {
-          const { status } = await Location.setAccuracyAsync(
-            Location.Accuracy.Highest
-          );
-          if (status !== "granted") {
-            Alert.alert(
-              "Insufficient permissions!",
-              "Sorry, we need location permissions to make this work!",
-              [{ text: "Okay" }]
-            );
-            return;
-          }
-        }
+      setLocation(location);
+      setUserAddress(formattedAddress);
 
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          setErrorMsg("Permission to access location was denied");
-          return;
-        }
-        setLocation(location);
-        setUserAddress(formattedAddress);
+      // Emit the location data to the Socket.io server
+      socket.emit("updateLocation", {
+        location: current_position,
+        address: formattedAddress,
+        origin: originPassenger,
+        destination: originDriver, // assuming originDriver is set elsewhere
+        distance: distance,
+        duration: duration,
+      });
 
-        // Emit the location data to the Socket.io server
-        socket.emit("updateLocation", {
+      // Return the details object
+      return {
+        description: formattedAddress,
+        place_id: data.results[0].place_id,
+        structured_formatting: {
+          main_text: formattedAddress,
+          secondary_text: "",
+        },
+        types: ["current_location"],
+        geometry: {
           location: {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
+            lat: location.coords.latitude,
+            lng: location.coords.longitude,
           },
-          address: formattedAddress, // Send the formatted address to the server
-        });
-        // Return the details object
-        return {
-          description: formattedAddress,
-          place_id: data.results[0].place_id,
-          structured_formatting: {
-            main_text: formattedAddress,
-            secondary_text: "",
-          },
-          types: ["current_location"],
-          geometry: {
-            location: {
-              lat: location.coords.latitude,
-              lng: location.coords.longitude,
-            },
-          },
-        };
-      } else {
-        console.error("Geocoding API request failed");
-        return null;
-      }
-
-      // Get the current location
-    } catch (error) {
-      console.error("Error sharing location:", error);
+        },
+      };
+    } else {
+      console.error(`Geocoding API request failed with status: ${response.status}`);
+      // Log more details if needed
       return null;
     }
-  };
+  } catch (error) {
+    console.error("Error sharing location:", error);
+    console.error("Error stack trace:", error.stack);
+    return null;
+  }
+};
 
-  const activateShareLocationPuv = () => {
-    setActive(!active);
+let interval;
 
-    if (!active) {
-      // Log the time when starting the interval
-      console.log("Interval started at:", new Date());
+const activateShareLocationPuv = () => {
+  setActive(!active);
 
-      // Set up an interval to call shareLocationPuv every 5000 milliseconds (5 seconds)
-      var interval = setInterval(shareLocationPuv, 2000);
+  if (!active) {
+    interval = setInterval(shareLocationPuv, 2000);
 
-      // stop the interval after a certain time 30secs
-      setTimeout(() => {
-        clearInterval(interval);
-        toggleActive(false);
-        console.log("Active state:", active);
-        console.log("Interval stopped ats:", new Date());
-      }, 60000);
-    } else {
-      // Clear the interval immediately when the active is already true
+    // Log the time when starting the interval
+    console.log("Interval started at:", new Date());
+
+    // Set up an interval to call shareLocationPuv every 2000 milliseconds (2 seconds)
+    var interval = setInterval(shareLocationPuv, 2000);
+
+    // stop the interval after a certain time (e.g., 60 seconds)
+    setTimeout(() => {
       clearInterval(interval);
-
+      toggleActive(false);
+      console.log("Active state:", active);
       console.log("Interval stopped at:", new Date());
-    }
-  };
+    }, 60000);
+  } else {
+    // Clear the interval immediately when the active is already true
+    clearInterval(interval);
+
+    console.log("Interval stopped at:", new Date());
+  }
+};
 
   // const activateGetLocationPuv = () => {
   //   setDriverActive(!driverActive);
@@ -299,24 +284,23 @@ const GooglePlacesInput = () => {
   };
 
   const onPlaceSelected = (details, flag) => {
-    const set = flag === "origin" ? setOrigin : setDestination;
-
     // Check if details object exists and has the expected structure
     if (details && details.geometry && details.geometry.location) {
       const { lat, lng } = details.geometry.location;
+      const position = { latitude: lat, longitude: lng };
 
-      const position = {
-        latitude: lat,
-        longitude: lng,
-      };
+      if (flag === 'origin') {
+        setSelectedOrigin(position);
+      } else if (flag === 'destination') {
+        setSelectedDestination(position);
+      }
 
-      set(position);
-      moveTo(position);
-      console.log(details.geometry.location);
+      // Rest of your code...
     } else {
-      console.warn("Invalid details object:", details);
+      console.warn('Invalid details object:', details);
     }
   };
+
   const onPlaceSelectedPuv = (details, flag) => {
     const set =
       flag === "originPassenger" ? setOriginPassenger : setOriginDriver;
@@ -342,23 +326,19 @@ const GooglePlacesInput = () => {
     const set = flag === "originDriver" ? setOriginDriver : setOriginPassenger;
     set(details);
   };
+
   useEffect(() => {
-    // Listen for location updates from the server
-    socket.on("locationUpdate", (data) => {
-      console.log("Location update received:", data);
-
-      // Update the locationUpdates state to trigger a re-render
-      setLocationUpdates((prevUpdates) => [...prevUpdates, data]);
-      setDestination(data.location);
-      setOriginDriver(data.location);
-      setShowPuvDirections(!showPuvDirections);
-    });
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      socket.off("locationUpdate");
+    const handleLocationUpdate = (data) => {
+      setLocationUpdates([...locationUpdates, data]);
     };
-  }, []);
+
+    socket.on('locationUpdate', handleLocationUpdate);
+
+    return () => {
+      socket.off('locationUpdate', handleLocationUpdate);
+    };
+  }, [locationUpdates, setLocationUpdates]);
+
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -371,52 +351,15 @@ const GooglePlacesInput = () => {
       setLocation(location);
     })();
   }, []);
+
   const handleLayerPress = () => {
     setLayerMenuVisible(!layerMenuVisible);
+    setShowTrafficLayer(!showTrafficLayer);
   };
   const handleSearchButtonPress = () => {
     // Toggle the search container visibility
     setSearchContainerVisible((prevVisibility) => !prevVisibility);
   };
-
-  const LayerMenu = ({ visible, onRequestClose }) => (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onRequestClose}
-    >
-      <View style={styles.layerMenuContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <TouchableOpacity
-            style={styles.layerMenuItem}
-            onPress={() => {
-              handleButtonPressRoute();
-            }}
-          >
-            <Text>Trace route!</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.layerMenuItem}
-            onPress={() => {
-              handleButtonPressPuv();
-            }}
-          >
-            <Text>nearest PUV</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.layerMenuItem}
-            onPress={() => {
-              setSelectedLayer("Legend 3");
-              onRequestClose();
-            }}
-          >
-            <Text>Legend 3</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-    </Modal>
-  );
 
   return (
     <View
@@ -434,7 +377,7 @@ const GooglePlacesInput = () => {
         showsUserLocation={true}
         showsMyLocationButton={true}
         showsCompass={true}
-        // showsTraffic={true}
+        showsTraffic={showTrafficLayer}
         tintColor="green"
         initialRegion={{
           latitude: 8.486097, // Local latitude
@@ -593,11 +536,7 @@ const GooglePlacesInput = () => {
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleLayerPress}>
-          <MaterialCommunityIcons name="layers" color="white" size={25} />
-          <LayerMenu
-            visible={layerMenuVisible}
-            onRequestClose={handleLayerPress}
-          />
+          <MaterialCommunityIcons name="train-car" color="white" size={25} />
         </TouchableOpacity>
       </View>
       <View style={styles.layerMenuContainer}>

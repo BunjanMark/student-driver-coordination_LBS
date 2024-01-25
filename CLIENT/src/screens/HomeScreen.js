@@ -23,35 +23,7 @@ const LayerOption = ({ onPress }) => (
 const handleLayerPress = () => {
   setLayerMenuVisible(!layerMenuVisible);
 };
-const LayerMenu = ({ visible, onRequestClose }) => {
-  return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onRequestClose}
-    >
-      <View style={styles.layerMenuContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {/* Terrain Option 1 */}
-          <TouchableOpacity style={styles.layerMenuItem}>
-            {/* Add option icon or content */}
-          </TouchableOpacity>
 
-          {/* Terrain Option 2 */}
-          <TouchableOpacity style={styles.layerMenuItem}>
-            {/* Add option icon or content */}
-          </TouchableOpacity>
-
-          {/* Terrain Option 3 */}
-          <TouchableOpacity style={styles.layerMenuItem}>
-            {/* Add option icon or content */}
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-    </Modal>
-  );
-};
 const Tab = createMaterialBottomTabNavigator();
 
 const HomeScreen = () => {
@@ -76,7 +48,7 @@ const HomeScreen = () => {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="map-marker"
-              color={darkMode ? "green" : color}
+              color={darkMode ? "white" : color}
               size={26}
             />
           ),
@@ -90,7 +62,7 @@ const HomeScreen = () => {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="clock"
-              color={darkMode ? "green" : color}
+              color={darkMode ? "white" : color}
               size={26}
             />
           ),
@@ -105,7 +77,7 @@ const HomeScreen = () => {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="account"
-              color={darkMode ? "green" : color}
+              color={darkMode ? "white" : color}
               size={26}
             />
           ),

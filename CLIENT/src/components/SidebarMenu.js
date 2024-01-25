@@ -127,11 +127,16 @@ const FixedHeader = () => {
     <TouchableWithoutFeedback onPress={closeSidebar}>
       <View style={[styles.container]}>
       <TouchableOpacity
-        style={[styles.sidebarButton, darkMode && styles.darkSidebarButton]}
-        onPress={toggleSidebar}
-      >
-        <Icon name="menu" size={25} color={darkMode ? "white" : "black"} />
-      </TouchableOpacity>
+  style={[
+    styles.sidebarButton,
+    { backgroundColor: darkMode ? 'transparent' : 'transparent' }, // Set background color to transparent for both dark and light modes
+  ]}
+  onPress={toggleSidebar}
+>
+  <Icon name="menu" size={25} color="white" />
+</TouchableOpacity>
+
+
 
         {isSidebarOpen && isFocused && (
           <View style={[styles.sidebar, darkMode && styles.darkSidebar]}>          
@@ -173,74 +178,74 @@ const FixedHeader = () => {
           </View>
           </View>         
                 
-            <TouchableOpacity
-              style={styles.sidebarItem}
-              onPress={() => {
-                navigator.navigate("About");
-              }}
-            >
+          <TouchableOpacity
+  style={styles.sidebarItem}
+  onPress={() => {
+    navigator.navigate("About");
+  }}
+>
+  <Icon
+    name="information-circle"
+    size={20}
+    color="white"  // Always set the color to white
+  />
+  <Text
+    style={[styles.sidebarText]}
+  >
+    About
+  </Text>
+</TouchableOpacity>
 
-              <Icon
-                name="information-circle"
-                size={20}
-                color={darkMode ? "black" : "white"}
-              />
-              <Text
-                style={[styles.sidebarText, darkMode && styles.darkSidebarText]}
-              >
-                About
-              </Text>
-            </TouchableOpacity>
+<TouchableOpacity
+  style={styles.sidebarItem}
+  onPress={() => {
+    navigator.navigate("Settings");
+  }}
+>
+  <Icon
+    name="settings"
+    size={20}
+    color="white"  // Always set the color to white
+  />
+  <Text
+    style={[styles.sidebarText]}
+  >
+    Settings
+  </Text>
+</TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.sidebarItem}
-              onPress={() => {
-                navigator.navigate("Settings");
-              }}
-            >
-              <Icon
-                name="settings"
-                size={20}
-                color={darkMode ? "black" : "white"}
-              />
-              <Text
-                style={[styles.sidebarText, darkMode && styles.darkSidebarText]}
-              >
-                Settings
-              </Text>
-            </TouchableOpacity>
+<TouchableOpacity
+  style={styles.sidebarItem}
+  onPress={() => toggleDarkMode(!darkMode)}
+>
+  <Icon
+    name="moon"
+    size={20}
+    color="white"  // Always set the color to white
+  />
+  <Text
+    style={[styles.sidebarText]}
+  >
+    Dark Mode
+  </Text>
+</TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.sidebarItem}
-              onPress={() => toggleDarkMode(!darkMode)}
-            >
-              <Icon
-                name="moon"
-                size={20}
-                color={darkMode ? "black" : "white"}
-              />
-              <Text
-                style={[styles.sidebarText, darkMode && styles.darkSidebarText]}
-              >
-                Dark Mode
-              </Text>
-            </TouchableOpacity>
+<TouchableOpacity               
+  style={styles.sidebarItem}
+  onPress={() => navigator.navigate("LoginScreen")}
+>
+  <FontAwesome
+    name="sign-out"
+    size={24}
+    color="white"  // Always set the color to white
+  />
+  <Text
+    style={[styles.logoutText]}
+  >
+    Logout
+  </Text>
+</TouchableOpacity>
 
-            <TouchableOpacity               
-            style={styles.sidebarItem}
-            onPress={() => navigator.navigate("LoginScreen")}>
-        
-          <FontAwesome
-            name="sign-out"
-            size={24}
-            color={darkMode ? "black" : "white"}
-          />
-           <Text
-                style={[styles.logoutText, darkMode && styles.darklogoutText]}
-              >
-                Logout
-              </Text>
-            </TouchableOpacity>
           </View>    
         </View>
       )}
@@ -263,12 +268,12 @@ const styles = StyleSheet.create({
   sidebar: {
     padding: 50,
     borderBottomRightRadius: 10,
-    backgroundColor: "#294B29",
+    backgroundColor: "green",
     width: "78%", 
     height: 900, 
   },
   darkSidebar: {
-    backgroundColor: "#908d96", 
+    backgroundColor: "#002408", 
   },
   sidebarItem: {
     flexDirection: "row",
@@ -338,7 +343,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   darkUserName: {
-    color: "black", 
+    color: "white", 
   },
 });
 

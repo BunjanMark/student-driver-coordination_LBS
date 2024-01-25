@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   },
   userProfile: {
     alignItems: "center",
-    marginTop: 260,
+    marginTop: 210,
     zIndex: 1,
     position: "absolute",
     top: "1%",
