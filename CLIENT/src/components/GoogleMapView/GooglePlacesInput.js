@@ -1,4 +1,4 @@
-import { View, Text, Button, Touchable } from "react-native";
+import { View, Text } from "react-native";
 import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
@@ -61,7 +61,7 @@ const InputAutocomplete = ({ label, placeholder, onPlaceSelected }) => {
 
 const GooglePlacesInput = () => {
   const [location, setLocation] = useState(null);
-  const { locationUpdates } = useStore();
+  const { locationUpdates, setDetails } = useStore();
   const { setLocationUpdates, setSelectedOrigin, setSelectedDestination } = useStore();
 
   const [userAddress, setUserAddress] = useState("");
@@ -90,13 +90,14 @@ const GooglePlacesInput = () => {
   const [driverActive, setDriverActive] = useState(false);
 
   const traceRouteOnReady = (args) => {
+    console.log("Trace Route On Ready:", args);
     if (args) {
-      // args.distance
-      // args.duration
       setDistance(args.distance);
       setDuration(args.duration);
+      setDetails(active, args.distance.toFixed(2), Math.ceil(args.duration));
     }
-  };
+  };  
+  
   const traceRouteOnReadyPuv = (args) => {
     if (args) {
       // args.distance
@@ -117,7 +118,9 @@ const GooglePlacesInput = () => {
   const handleButtonPressPuv = () => {
     setIsSearchContainerVisible(!isSearchContainerVisible);
     setIsSearchContainerPuvVisible(!isSearchContainerPuvVisible);
-    // Additional logic or state updates can be added here
+
+    // Update store with details
+    setDetails(active, distance.toFixed(2), Math.ceil(duration));
   };
 
   const toggleActive = (value) => {
@@ -133,6 +136,8 @@ const GooglePlacesInput = () => {
       longitude: location.coords.longitude,
     };
 
+    console.log(active);
+
     onPlaceSelectedPuv(current_position, "originPassenger");
 
     // Get the address from the coordinates using the Geocoding API
@@ -142,12 +147,29 @@ const GooglePlacesInput = () => {
 
     const data = await response.json();
 
-    if (response.status === 200) {
-      const data = await response.json();
-    // Extract the formatted address from the response
+    if (data.status === "OK" && data.results.length > 0) {
+      // Extract the formatted address from the response
       const formattedAddress = data.results[0].formatted_address;
       console.log("Formatted Address:", formattedAddress);
+      if (Platform.OS === "ios") {
+        const { status } = await Location.setAccuracyAsync(
+          Location.Accuracy.Highest
+        );
+        if (status !== "granted") {
+          Alert.alert(
+            "Insufficient permissions!",
+            "Sorry, we need location permissions to make this work!",
+            [{ text: "Okay" }]
+          );
+          return;
+        }
+      }
 
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
       setLocation(location);
       setUserAddress(formattedAddress);
 
@@ -156,7 +178,7 @@ const GooglePlacesInput = () => {
         location: current_position,
         address: formattedAddress,
         origin: originPassenger,
-        destination: originDriver, // assuming originDriver is set elsewhere
+        destination: originDriver, 
         distance: distance,
         duration: duration,
       });
@@ -184,19 +206,14 @@ const GooglePlacesInput = () => {
     }
   } catch (error) {
     console.error("Error sharing location:", error);
-    console.error("Error stack trace:", error.stack);
     return null;
   }
 };
-
-let interval;
 
 const activateShareLocationPuv = () => {
   setActive(!active);
 
   if (!active) {
-    interval = setInterval(shareLocationPuv, 2000);
-
     // Log the time when starting the interval
     console.log("Interval started at:", new Date());
 
@@ -284,18 +301,31 @@ const activateShareLocationPuv = () => {
   };
 
   const onPlaceSelected = (details, flag) => {
+    const set = flag === "origin" ? setOrigin : setDestination;
+  
     // Check if details object exists and has the expected structure
     if (details && details.geometry && details.geometry.location) {
       const { lat, lng } = details.geometry.location;
       const position = { latitude: lat, longitude: lng };
-
+  
+      set(position);
+      moveTo(position);
+  
+      // Extract formatted address from details
+      const locationName = details.formatted_address;
+  
+      console.log("Selected Location:", locationName);
+  
+      // Set the selected location name to state or perform further actions
+      // For example:
+      // setDetails({ locationName, latitude: lat, longitude: lng });
+  
       if (flag === 'origin') {
-        setSelectedOrigin(position);
+        setSelectedOrigin({ locationName, position });
       } else if (flag === 'destination') {
-        setSelectedDestination(position);
+        setSelectedDestination({ locationName, position });
       }
 
-      // Rest of your code...
     } else {
       console.warn('Invalid details object:', details);
     }
@@ -304,27 +334,62 @@ const activateShareLocationPuv = () => {
   const onPlaceSelectedPuv = (details, flag) => {
     const set =
       flag === "originPassenger" ? setOriginPassenger : setOriginDriver;
-
+  
     // Check if details object exists and has the expected structure
-    // if (details && details.geometry && details.geometry.location) {
-    //   const { lat, lng } = details.geometry.location;
-
-    //   const position = {
-    //     latitude: lat,
-    //     longitude: lng,
-    //   };
-
-    //   set(position);
-    //   moveTo(position);
-    // } else {
-    //   console.warn("Invalid details object:", details);
-    // }
-    moveTo(details);
-    set(details);
+    if (details && details.geometry && details.geometry.location) {
+      const { lat, lng } = details.geometry.location;
+  
+      const position = {
+        latitude: lat,
+        longitude: lng,
+      };
+  
+      set(position);
+      moveTo(position);
+  
+      // Extract formatted address from details
+      const locationName = details.formatted_address;
+  
+      console.log("Selected Location:", locationName);
+  
+      // Set the selected location name to state or perform further actions
+      // For example:
+      // setDetails({ locationName, latitude: lat, longitude: lng });
+  
+      // Rest of your code...
+    } else {
+      console.warn("Invalid details object:", details);
+    }
   };
+
   const onPlaceSelectedPuvDriver = (details, flag) => {
     const set = flag === "originDriver" ? setOriginDriver : setOriginPassenger;
-    set(details);
+  
+    // Check if details object exists and has the expected structure
+    if (details && details.geometry && details.geometry.location) {
+      const { lat, lng } = details.geometry.location;
+  
+      const position = {
+        latitude: lat,
+        longitude: lng,
+      };
+  
+      set(position);
+      moveTo(position);
+  
+      // Extract formatted address from details
+      const locationName = details.formatted_address;
+  
+      console.log("Selected Location:", locationName);
+  
+      // Set the selected location name to state or perform further actions
+      // For example:
+      // setDetails({ locationName, latitude: lat, longitude: lng });
+  
+      // Rest of your code...
+    } else {
+      console.warn("Invalid details object:", details);
+    }
   };
 
   useEffect(() => {
@@ -346,11 +411,11 @@ const activateShareLocationPuv = () => {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-
+  
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     })();
-  }, []);
+  }, []);  
 
   const handleLayerPress = () => {
     setLayerMenuVisible(!layerMenuVisible);
@@ -427,13 +492,13 @@ const activateShareLocationPuv = () => {
         {originDriver && <Marker coordinate={originDriver} />}
         {showPuvDirections && originPassenger && originDriver && (
           <MapViewDirections
-            origin={originPassenger}
-            destination={originDriver}
-            apikey={GOOGLE_API_KEY}
-            strokeColor="green"
-            strokeWidth={4}
-            onReady={traceRouteOnReadyPuv}
-          />
+          origin={originPassenger}
+          destination={originDriver}
+          apikey={GOOGLE_API_KEY}
+          strokeColor="green"
+          strokeWidth={4}
+          onReady={traceRouteOnReadyPuv}
+        />      
         )}
       </MapView>
 
@@ -461,6 +526,7 @@ const activateShareLocationPuv = () => {
                 <TouchableOpacity
                   onPress={() => {
                     setOrigin(null);
+                    setDestination(null);
                   }}
                 >
                   <Text> Remove Marker</Text>

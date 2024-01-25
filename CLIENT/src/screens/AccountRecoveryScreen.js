@@ -106,7 +106,7 @@ const AccountRecoveryScreen = () => {
             <Text
               variant="headlineLarge"
               style={{
-                top: -50,
+                top: -20,
                 fontWeight: "bold",
                 fontSize: widthPercentageToDP("8%"),
               }}
@@ -166,6 +166,7 @@ const AccountRecoveryScreen = () => {
               Reset Password
             </Button>
             <Button
+              style={{ ...styles.goback }}
               onPress={() => {
                 navigator.goBack();
               }}
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     width: widthPercentageToDP("80%"),
-    marginBottom: heightPercentageToDP("2%"),
+    marginBottom: heightPercentageToDP("3%"),
   },
   formContainer: {
     flex: 1,
@@ -207,6 +208,9 @@ const styles = StyleSheet.create({
     top: heightPercentageToDP("-10%"),
     left: widthPercentageToDP("-7%"),
     alignSelf: "flex-start",
+  },
+  goback: {
+    marginBottom: 40,
   },
 });
 

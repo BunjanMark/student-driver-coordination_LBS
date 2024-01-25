@@ -178,12 +178,10 @@ const Profile = () => {
                 isEditingUsername ? handleSaveUsername : handleEditUsername
               }
             >
-              <MaterialCommunityIcons
-                name={
-                  isEditingUsername ? "content-save-edit-outline" : "pencil"
-                }
+             <MaterialCommunityIcons
+                name={isEditingUsername ? "content-save-edit-outline" : "pencil"}
                 size={24}
-                color=""
+                color={darkMode ? "white" : "black"}  
               />
             </TouchableOpacity>
           </View>
@@ -320,7 +318,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   darkUserName: {
-    color: "white", // Dark mode text color
+    color: "black", // Dark mode text color
   },
   editableUsername: {
     fontSize: 20,

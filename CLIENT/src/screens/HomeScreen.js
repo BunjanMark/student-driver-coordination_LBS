@@ -37,7 +37,7 @@ const HomeScreen = () => {
       initialRouteName="Feed"
       activeColor={darkMode ? "green" : "green"} // Use green for active color in dark mode, blue in light mode (you can adjust this)
       barStyle={{
-        backgroundColor: darkMode ? "#717171" : "white", // Use black for background in dark mode, white in light mode (you can adjust this)
+        backgroundColor: darkMode ? "black" : "white", // Use black for background in dark mode, white in light mode (you can adjust this)
       }}
     >
       <Tab.Screen
