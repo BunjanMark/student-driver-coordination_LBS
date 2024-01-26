@@ -16,13 +16,10 @@ const History = () => {
     // Combine location updates and selected origin/destination into a single array
     const combinedData = [...locationUpdates];
     if (selectedOrigin) {
-      combinedData.push({ origin: selectedOrigin, type: "Selected Origin" });
+      combinedData.push({ origin: selectedOrigin, type: 'Selected Origin' });
     }
     if (selectedDestination) {
-      combinedData.push({
-        destination: selectedDestination,
-        type: "Selected Destination",
-      });
+      combinedData.push({ destination: selectedDestination, type: 'Selected Destination' });
     }
     setSelectedData(combinedData);
   }, [locationUpdates, selectedOrigin, selectedDestination]);
@@ -30,15 +27,8 @@ const History = () => {
   const handleLocationUpdate = async (locationUpdate) => {
     try {
       // Extract relevant details from the locationUpdate
-      const {
-        deviceNumber,
-        distance,
-        duration,
-        timestamp,
-        origin,
-        destination,
-      } = locationUpdate;
-
+      const { deviceNumber, distance, duration, timestamp, origin, destination } = locationUpdate;
+  
       // Save the location update to history in SecureStore
       await SecureStore.setItemAsync(
         "locationHistory",
@@ -47,7 +37,7 @@ const History = () => {
           { deviceNumber, distance, duration, timestamp, origin, destination },
         ])
       );
-
+  
       // Update state to reflect the new location update
       setLocationUpdates((prevUpdates) => [
         ...prevUpdates,
@@ -71,18 +61,16 @@ const History = () => {
     }
   };
 
-  const renderItem = ({ item }) => {
-    const origin = item.origin
-      ? `${item.origin.latitude}, ${item.origin.longitude}`
-      : "N/A";
-    const destination = item.destination
-      ? `${item.destination.latitude}, ${item.destination.longitude}`
-      : "N/A";
+  const renderItem = ({ item }) => { 
+    const origin = item.origin ? `${item.origin.latitude}, ${item.origin.longitude}` : "N/A";
+    const destination = item.destination ? `${item.destination.latitude}, ${item.destination.longitude}` : "N/A";
 
     return (
-      <View style={[styles.historyItem, darkMode && styles.darkHistoryItem]}>
-        <Text>Selected Origin: {JSON.stringify(selectedOrigin)}</Text>
-        <Text>Selected Destination: {JSON.stringify(selectedDestination)}</Text>
+      <View
+        style={[styles.historyItem, darkMode && styles.darkHistoryItem]}
+      >
+         <Text>Selected Origin: {JSON.stringify(selectedOrigin)}</Text>
+         <Text>Selected Destination: {JSON.stringify(selectedDestination)}</Text>
       </View>
     );
   };

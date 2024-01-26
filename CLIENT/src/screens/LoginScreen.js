@@ -139,13 +139,12 @@ const LoginScreen = () => {
                 }
               />
               <View style={styles.forgotPasswordContainer}>
-                <Text>Forgot password?</Text>
                 <Button
                   onPress={() => {
                     navigator.navigate("AccountRecoveryScreen");
                   }}
                 >
-                  Password Reset
+                  Forgot Password 
                 </Button>
               </View>
             </SafeAreaView>
@@ -166,6 +165,7 @@ const LoginScreen = () => {
                 flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
+                marginTop: -20,
               }}
             >
               <Text>Not a member?</Text>
@@ -231,13 +231,15 @@ const styles = StyleSheet.create({
     // Define your Button styles here
     width: widthPercentageToDP("80%"),
     height: heightPercentageToDP("6%"),
-    marginBottom: heightPercentageToDP("2%"),
+    marginBottom: heightPercentageToDP("5%"),
+    marginTop: heightPercentageToDP("-10%"),
   },
   forgotPasswordContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: heightPercentageToDP("2%"),
+    marginBottom: heightPercentageToDP("10%"),
+    marginTop: -15,
   },
 });
 
