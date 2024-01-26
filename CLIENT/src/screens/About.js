@@ -50,12 +50,12 @@ const styles = StyleSheet.create({
     height: "20%",
     alignSelf: "center",
     marginBottom: 15,
-    marginTop: 300,
+    marginTop: 250,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 18,
+    marginBottom: 18,marginTop: 20,
   },
   description: {
     fontSize: 16,

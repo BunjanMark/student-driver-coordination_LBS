@@ -6,15 +6,15 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  TextInput,
-  Image,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useDarkMode } from "../components/context/DarkModeContext";
 import Icon from "react-native-vector-icons/Ionicons";
+import { TextInput as PaperTextInput, Button as PaperButton, Provider as PaperProvider, } from "react-native-paper"; 
+import fetchServices from "../services/fetchServices";
 
-const Settings = () => {
+const Settings = ({ route }) => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { darkMode, setDarkMode } = useDarkMode();
@@ -22,10 +22,21 @@ const Settings = () => {
   const [trackLocation, setTrackLocation] = useState(true);
   const [receiveNotifications, setReceiveNotifications] = useState(true);
   const [showAccountDetails, setShowAccountDetails] = useState(false);
-  const [email, setUserEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [HideEntry, setHideEntry] = useState(true);
+  const [password_confirmation, setPassword_confirmation] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  const showToast = (message = "Something went wrong") => {
+    Toast.show(message, 3000);
+  };
+  const toggleSecureEntry = () => {
+    setHideEntry(!HideEntry);
+  };
+  
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -34,7 +45,7 @@ const Settings = () => {
         const receiveNotificationsValue = await AsyncStorage.getItem(
           "receiveNotifications"
         );
-        const userEmailValue = await AsyncStorage.getItem("userEmail");
+        const userEmailFromParams = route.params?.userEmail;
         const usernameValue = await AsyncStorage.getItem("username");
 
         if (darkModeValue !== null) {
@@ -49,8 +60,8 @@ const Settings = () => {
           setReceiveNotifications(JSON.parse(receiveNotificationsValue));
         }
 
-        if (userEmailValue !== null) {
-          setUserEmail(userEmailValue);
+        if (userEmailFromParams !== undefined) {
+          setUserEmail(userEmailFromParams);
         }
 
         if (usernameValue !== null) {
@@ -97,15 +108,48 @@ const Settings = () => {
         setDarkMode(newDarkModeValue);
         saveDarkModeState(newDarkModeValue);
         break;
-      // Add more cases for additional settings
       default:
         break;
     }
   };
 
-  const handleSaveChanges = () => {
-    saveSettingsState("password", password);
-    setEditMode(false);
+  const handleSaveChanges = async () => {
+    try {
+      // Perform account recovery logic here
+      setLoading(!loading);
+      if (email === "" || password === "" || password_confirmation === "") {
+        showToast("Please input required data");
+        setIsError(true);
+        return false;
+      }
+      if (password !== password_confirmation) {
+        showToast("Password do not match");
+        setIsError(true);
+        return false;
+      }
+      const url =
+        "https://c292-2001-4455-62c-c800-478-e4fb-7367-cf00.ngrok-free.app/api/password/reset";
+      // Simulate asynchronous operation (replace with your actual logic)
+
+      const data = {
+        email,
+        password,
+        password_confirmation,
+      };
+      const result = await fetchServices.postData(url, data);
+      // Display success message or navigate to the next screen
+
+      if (result.message != null) {
+        showToast(result?.message);
+      } else {
+        navigator.navigate("LoginScreen");
+      }
+    } catch (e) {
+      console.error(e.toString());
+      showToast("An error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAccountDetailsPress = () => {
@@ -127,7 +171,7 @@ const Settings = () => {
         source={require("../images/bg.png")}
         style={styles.backgroundImage}
       /> */}
-
+ 
       <View style={styles.header}>
         <TouchableOpacity
           onPress={handleBackPress}
@@ -190,39 +234,69 @@ const Settings = () => {
                 darkMode && styles.darkEditAccountDetailsText,
               ]}
             >
-              {editMode ? "CANCEL EDIT" : "EDIT PASSWORD"}
+              {editMode ? "CANCEL" : "CHANGE PASSWORD"}
             </Text>
           </View>
         </TouchableOpacity>
       )}
-
-      {editMode && (
+         
+      {showAccountDetails && editMode && (
         <>
-          <Text style={[styles.subHeading, darkMode && styles.darkSubHeading]}>
-            Change Password
-          </Text>
-          <TextInput
-            style={[styles.input, darkMode && styles.darkInput]}
-            value={password}
-            onChangeText={setPassword}
-            placeholder="Enter your password"
-            secureTextEntry
+           <PaperTextInput
+            style={{ ...styles.input, borderRadius: 10 }}
+            mode="outlined"
+            label="Email"
+            placeholder="Enter your email"
+            inputMode="email"
+            value={email}
+            error={isError}
+            onChangeText={(text) => setEmail(text)}
+            disabled={!editMode}
           />
-
-          <TouchableOpacity onPress={handleSaveChanges}>
-            <View
-              style={[styles.saveButton, darkMode && styles.darkSaveButton]}
-            >
-              <Text
-                style={[
-                  styles.saveButtonText,
-                  darkMode && styles.darkSaveButtonText,
-                ]}
-              >
-                Save
-              </Text>
-            </View>
-          </TouchableOpacity>
+          <PaperTextInput
+            mode="outlined"
+            style={{ ...styles.input, borderRadius: 10 }}
+            label="Password"
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry={HideEntry}
+            error={isError}
+            disabled={!editMode}
+            right={
+              <PaperTextInput.Icon
+                onPress={toggleSecureEntry}
+                icon={!HideEntry ? "eye" : "eye-off"}
+              />
+            }
+          />
+          <PaperTextInput
+            mode="outlined"
+            style={{ ...styles.input, borderRadius: 10 }}
+            label="Confirm password"
+            placeholder="Re-enter your password"
+            value={password_confirmation}
+            onChangeText={(text) => setPassword_confirmation(text)}
+            secureTextEntry={HideEntry}
+            disabled={!editMode}
+            right={
+              <PaperTextInput.Icon
+                onPress={toggleSecureEntry}
+                icon={!HideEntry ? "eye" : "eye-off"}
+              />
+            }
+          />
+          <PaperButton
+            loading={loading}
+            style={{ ...styles.saveButton, backgroundColor: "black" }}
+            mode="contained-tonal"
+            icon="account-plus"
+            onPress={handleSaveChanges}
+            labelStyle={{ color: "white" }}
+            disabled={!editMode}
+          >
+            Change Password
+          </PaperButton>
         </>
       )}
 
@@ -402,8 +476,6 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
     marginBottom: 10,
     marginLeft: 10,
     marginRight: 10,

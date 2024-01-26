@@ -58,7 +58,7 @@ const GooglePlacesInput = () => {
   const insets = useSafeAreaInsets();
   const [origin, setOrigin] = useState(null);
   const [tracedRoutes, setTracedRoutes] = useState([]);
-  const { locationUpdates } = useStore();
+  const { locationUpdates, setDetails } = useStore();
   const { setLocationUpdates, setSelectedOrigin, setSelectedDestination } =
     useStore();
   const [destination, setDestination] = useState(null);
@@ -79,13 +79,14 @@ const GooglePlacesInput = () => {
   const [driverActive, setDriverActive] = useState(false);
 
   const traceRouteOnReady = (args) => {
+    console.log("Trace Route On Ready:", args);
     if (args) {
-      // args.distance
-      // args.duration
       setDistance(args.distance);
       setDuration(args.duration);
+      setDetails(active, args.distance.toFixed(2), Math.ceil(args.duration));
     }
-  };
+  };  
+
   const traceRouteOnReadyPuv = (args) => {
     if (args) {
       // args.distance
@@ -162,7 +163,7 @@ const GooglePlacesInput = () => {
           location: current_position,
           address: formattedAddress,
           origin: originPassenger,
-          destination: originDriver, // assuming originDriver is set elsewhere
+          destination: originDriver, 
           distance: distance,
           duration: duration,
         });
@@ -231,22 +232,29 @@ const GooglePlacesInput = () => {
   };
 
   const onPlaceSelected = (details, flag) => {
+    const set = flag === "origin" ? setOrigin : setDestination;
+
     // Check if details object exists and has the expected structure
     if (details && details.geometry && details.geometry.location) {
       const { lat, lng } = details.geometry.location;
       const position = { latitude: lat, longitude: lng };
-
-      if (flag === "origin") {
-        setSelectedOrigin(position);
+      set(position);
+      moveTo(position);
+  
+      // Extract formatted address from details
+      const locationName = details.formatted_address;
+  
+      console.log("Selected Location:", locationName);
+      if (flag === 'origin') {
+        setSelectedOrigin({ locationName, position });
         setOrigin(position);
-      } else if (flag === "destination") {
-        // setSelectedDestination(position);
+      } else if (flag === 'destination') {
+        setSelectedDestination({ locationName, position });
         setDestination(position);
       }
 
-      // Rest of your code...
     } else {
-      console.warn("Invalid details object:", details);
+      console.warn('Invalid details object:', details);
     }
   };
 
@@ -271,10 +279,36 @@ const GooglePlacesInput = () => {
     moveTo(details);
     set(details);
   };
-  const onPlaceSelectedPuvDriver = (details, flag) => {
-    const set = flag === "originDriver" ? setOriginDriver : setOriginPassenger;
-    set(details);
-  };
+
+const onPlaceSelectedPuvDriver = (details, flag) => {
+  const set = flag === "originDriver" ? setOriginDriver : setOriginPassenger;
+
+  // Check if details object exists and has the expected structure
+  if (details && details.geometry && details.geometry.location) {
+    const { lat, lng } = details.geometry.location;
+
+    const position = {
+      latitude: lat,
+      longitude: lng,
+    };
+
+    set(position);
+    moveTo(position);
+
+    // Extract formatted address from details
+    const locationName = details.formatted_address;
+
+    console.log("Selected Location:", locationName);
+
+    // Set the selected location name to state or perform further actions
+    // For example:
+    // setDetails({ locationName, latitude: lat, longitude: lng });
+
+    // Rest of your code...
+  } else {
+    console.warn("Invalid details object:", details);
+  }
+};
 
   useEffect(() => {
     const handleLocationUpdate = (data) => {
@@ -535,6 +569,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     padding: 8,
     borderRadius: 8,
+    marginTop: 20,
   },
   input: {
     borderColor: "#888",
@@ -547,7 +582,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
   button: {
     width: "100%",
     backgroundColor: "green",
@@ -586,7 +620,7 @@ const styles = StyleSheet.create({
   routeButton: {
     backgroundColor: "green",
     paddingVertical: 12,
-    marginTop: 16,
+    marginTop: 13,
     borderRadius: 5,
   },
   buttonText: {
