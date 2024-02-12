@@ -1,12 +1,28 @@
 # Project Name
 
 ## Description
-This project is a [brief description of what the React Native application does].
+This project is a comprehensive Mobile Application for Efficient Driver-Passenger Coordination and Location Tracking.
+
 
 ## Prerequisites
 - Node.js
 - React Native CLI
-- [Any additional dependencies or tools needed to run the application]
+- ngrok
+- Websocket server (Socket.io)
+- Laravel
+- Composer
+- Google API key
+     //set the application restriction to none
+     //enable the following APIs and services from google: 
+Maps SDK for iOS
+Places API (New)
+Maps SDK for Android
+Maps JavaScript API
+Geocoding API
+Geolocation API
+Directions API
+Places API
+Routes API
 
 ## Installation
 1. Clone the repository: `git clone https://github.com/username/project.git`
