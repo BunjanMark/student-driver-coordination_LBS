@@ -1,4 +1,4 @@
-# Project Name
+# HOPSPOT
 
 ## Description
 This project is a comprehensive Mobile Application for Efficient Driver-Passenger Coordination and Location Tracking.
@@ -25,9 +25,11 @@ Places API
 Routes API
 
 ## Installation
-1. Clone the repository: `git clone https://github.com/username/project.git`
-2. Navigate to the project directory: `cd project`
+1. Clone the repository: https://github.com/BunjanMark/FINAL_HOPSPOT.git
+2. Navigate to the client project directory: `cd client`
 3. Install dependencies: `npm install`
+4. Navigate to the server project directory: 'cd server'
+5. 
 
 ## Usage
 1. Start the development server: `npx react-native start`
