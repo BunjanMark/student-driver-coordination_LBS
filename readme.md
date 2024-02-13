@@ -27,6 +27,8 @@ This project is a comprehensive Mobile Application for Efficient Driver-Passenge
 
 - **Composer**
 
+- MYSQL
+
 - **Google API key**
 
 //set the application restriction to none
