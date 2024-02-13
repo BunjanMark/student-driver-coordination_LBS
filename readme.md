@@ -132,7 +132,7 @@ or	(mailto:bunjan.mark476@example.com), (mailto:janefaithlabrador06@gmail.com).
 
   
 
-`We extend our sincere appreciation to our project adviser, Sir Jomar & Sir Alex, for their invaluable guidance, support, and mentorship throughout the development of this project. Their expertise and insights have been instrumental in shaping the direction and success of our work.`
+`We extend our sincere appreciation to our project adviser/instructors, Mr. Jomar Llevado & Mr. Alex Simon Dacer, for their invaluable guidance, support, and mentorship throughout the development of this project. Their expertise and insights have been instrumental in shaping the direction and success of our work.`
 
   
 
