@@ -170,9 +170,9 @@ or	(mailto:bunjan.mark476@example.com), (mailto:janefaithlabrador06@gmail.com).
     
     DB_PORT=3306
     
-    DB_DATABASE=laravelapi
+    DB_DATABASE=
     
-    DB_USERNAME=root
+    DB_USERNAME=
     
     DB_PASSWORD=
     
@@ -212,7 +212,7 @@ or	(mailto:bunjan.mark476@example.com), (mailto:janefaithlabrador06@gmail.com).
     
     MAIL_USERNAME=bunjan.mark476@gmail.com
     
-    MAIL_PASSWORD=koakoko123
+    MAIL_PASSWORD=
     
     MAIL_ENCRYPTION=ssl
     
