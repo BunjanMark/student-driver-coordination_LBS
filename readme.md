@@ -108,9 +108,9 @@ Enable the following APIs and services from google:
 
 ## License
 
-This project is currently under development and all rights are reserved by [Your Team Name]. 
+This project is currently under further to be develop (2 months since the creation) and all rights are reserved by TechSolve. 
 
-Unauthorized copying, distribution, or use of any part of this project is strictly prohibited without prior written permission from [Your Team Name]. 
+Unauthorized copying, distribution, or use of any part of this project is strictly prohibited without prior written permission from TechSolve. 
 
 Once the project is completed and ready for release, an appropriate license will be chosen and included in the repository.
 
