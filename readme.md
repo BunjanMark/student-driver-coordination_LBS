@@ -55,7 +55,7 @@ Enable the following APIs and services from google:
 
 3. Install React Native dependencies: `npm install`
 
-4. Navigate to the server project directory: 'cd server'
+4. Navigate to the server project directory: `cd server`
 
 5. Install Laravel dependencies: `composer install`
 
